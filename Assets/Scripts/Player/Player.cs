@@ -8,25 +8,20 @@ namespace TwoDLocal
 
     public class Player : MonoBehaviour
     {
-
-        Camera cam;
         NavMeshAgent agent;
         Army army;
         [SerializeField] LayerMask minionMask;
         // Start is called before the first frame update
         void Start()
         {
-            cam = Camera.main;
             agent = GetComponent<NavMeshAgent>();
             army = GetComponent<Army>(); 
-            agent.updateRotation = false;
-            agent.updateUpAxis = false;
         }
 
         // Update is called once per frame
         void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            /*if (Input.GetMouseButtonDown(0))
             {
                 var mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 agent.SetDestination(mouseWorldPos - Camera.main.transform.position.z * Vector3.forward);
@@ -35,7 +30,7 @@ namespace TwoDLocal
                 transform.Rotate(transform.forward * angle);
                 army.SetMinionsPosition(mouseWorldPos + -Camera.main.transform.position.z * Vector3.forward, dir);
                 
-            }
+            }*/
             var minionColliders = Physics2D.OverlapCircleAll(transform.position, 1f, minionMask);
 
             if (minionColliders.Length > 0)
@@ -53,14 +48,6 @@ namespace TwoDLocal
             minion.Owner = this;
             army.AddMinion(minion);
             army.SetMinionsPosition(agent.destination, transform.up);
-        }
-
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(transform.position, transform.position + transform.up);
-            Gizmos.color = Color.green;
-            Gizmos.DrawLine(transform.position, transform.position + transform.right);
         }
     }
 
