@@ -6,6 +6,8 @@ using static UnityEngine.InputSystem.InputAction;
 public class PlayerInput : MonoBehaviour
 {
     [SerializeField] PlayerController motor = null;
+    [SerializeField] PlayerCombat combat = null;
+    [SerializeField] Player player = null;
 
     private Controls controls;
     private Controls Controls
@@ -35,5 +37,11 @@ public class PlayerInput : MonoBehaviour
 
         var mousePlayerDelta = Camera.main.ScreenToWorldPoint(look) - transform.position;
         motor.SetLook((Vector2)mousePlayerDelta);
+    }
+    public void OnAttack(CallbackContext context)
+    {
+        if (player == null) return;
+        var isPerformed = context.performed;
+        if(isPerformed) player.Attack(null);
     }
 }

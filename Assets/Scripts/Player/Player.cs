@@ -3,19 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace TwoDLocal
-{
-
-    public class Player : MonoBehaviour
+    public class Player : Hitable
     {
         NavMeshAgent agent;
         Army army;
+        PlayerCombat combat;
+        PlayerController motor;
+
         [SerializeField] LayerMask minionMask;
         // Start is called before the first frame update
         void Start()
         {
             agent = GetComponent<NavMeshAgent>();
-            army = GetComponent<Army>(); 
+            combat = GetComponent<PlayerCombat>();
+            motor = GetComponent<PlayerController>();
+            army = GetComponent<Army>();
+
+            motor.updateMinionPosition.AddListener(delegate { army.SetMinionsPosition(agent.destination, transform.up); });
         }
 
         // Update is called once per frame
@@ -31,7 +35,9 @@ namespace TwoDLocal
                 army.SetMinionsPosition(mouseWorldPos + -Camera.main.transform.position.z * Vector3.forward, dir);
                 
             }*/
-            var minionColliders = Physics2D.OverlapCircleAll(transform.position, 1f, minionMask);
+            
+            
+            /*var minionColliders = Physics2D.OverlapCircleAll(transform.position, 1f, minionMask);
 
             if (minionColliders.Length > 0)
             {
@@ -40,15 +46,25 @@ namespace TwoDLocal
                     var minion = col.GetComponentInParent<Minion>();
                     if (!minion.Owner) AddMinionToArmy(minion);
                 }
-            }
+            }*/
         }
 
-        void AddMinionToArmy(Minion minion)
-        {
-            minion.Owner = this;
-            army.AddMinion(minion);
-            army.SetMinionsPosition(agent.destination, transform.up);
-        }
+    public override void Attack(Hitable victim)
+    {
+        combat.Attack();
     }
 
+    void AddMinionToArmy(Minion minion)
+    {
+        minion.Owner = this;
+        army.AddMinion(minion);
+        army.SetMinionsPosition(agent.destination, transform.up);
+    }
+    protected override void Die()
+    {
+        base.Die();
+        Debug.Log("Player Die");
+    }
 }
+
+

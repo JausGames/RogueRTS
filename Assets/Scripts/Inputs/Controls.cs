@@ -53,6 +53,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""ee252791-1ef5-4550-9ba5-fc9e5807d123"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -143,6 +152,28 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""MouseLook"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f3f91d62-f4ef-4236-816e-c82c39363692"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2c9624d9-15c7-4bc8-a837-38cfdda88353"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -182,6 +213,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_PlayerControl_Move = m_PlayerControl.FindAction("Move", throwIfNotFound: true);
         m_PlayerControl_Look = m_PlayerControl.FindAction("Look", throwIfNotFound: true);
         m_PlayerControl_MouseLook = m_PlayerControl.FindAction("MouseLook", throwIfNotFound: true);
+        m_PlayerControl_Attack = m_PlayerControl.FindAction("Attack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -244,6 +276,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerControl_Move;
     private readonly InputAction m_PlayerControl_Look;
     private readonly InputAction m_PlayerControl_MouseLook;
+    private readonly InputAction m_PlayerControl_Attack;
     public struct PlayerControlActions
     {
         private @Controls m_Wrapper;
@@ -251,6 +284,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_PlayerControl_Move;
         public InputAction @Look => m_Wrapper.m_PlayerControl_Look;
         public InputAction @MouseLook => m_Wrapper.m_PlayerControl_MouseLook;
+        public InputAction @Attack => m_Wrapper.m_PlayerControl_Attack;
         public InputActionMap Get() { return m_Wrapper.m_PlayerControl; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -269,6 +303,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @MouseLook.started -= m_Wrapper.m_PlayerControlActionsCallbackInterface.OnMouseLook;
                 @MouseLook.performed -= m_Wrapper.m_PlayerControlActionsCallbackInterface.OnMouseLook;
                 @MouseLook.canceled -= m_Wrapper.m_PlayerControlActionsCallbackInterface.OnMouseLook;
+                @Attack.started -= m_Wrapper.m_PlayerControlActionsCallbackInterface.OnAttack;
+                @Attack.performed -= m_Wrapper.m_PlayerControlActionsCallbackInterface.OnAttack;
+                @Attack.canceled -= m_Wrapper.m_PlayerControlActionsCallbackInterface.OnAttack;
             }
             m_Wrapper.m_PlayerControlActionsCallbackInterface = instance;
             if (instance != null)
@@ -282,6 +319,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @MouseLook.started += instance.OnMouseLook;
                 @MouseLook.performed += instance.OnMouseLook;
                 @MouseLook.canceled += instance.OnMouseLook;
+                @Attack.started += instance.OnAttack;
+                @Attack.performed += instance.OnAttack;
+                @Attack.canceled += instance.OnAttack;
             }
         }
     }
@@ -309,5 +349,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
         void OnMouseLook(InputAction.CallbackContext context);
+        void OnAttack(InputAction.CallbackContext context);
     }
 }
