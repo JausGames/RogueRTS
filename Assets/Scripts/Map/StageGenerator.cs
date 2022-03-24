@@ -1,16 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class StageGenerator : MonoBehaviour
 {
+    [SerializeField] NavMeshSurface2d surface2D;
     [SerializeField] List<GameObject> roomPrefabs = new List<GameObject>();
     [SerializeField] List<Direction[]> roomDoorsDirections = new List<Direction[]>();
     [SerializeField] List<Vector3[]> roomDoorPositions = new List<Vector3[]>();
-    [SerializeField] int roomCount = 20;
+    [SerializeField] int roomCount = 10;
+    [SerializeField] bool buildOnce = false;
+    //Vector2 GridSetting.gridSize = new Vector2(6.75f, 5.75f);
     [SerializeField] Stage stage;
+
+    
+
+    IEnumerator Start()
+    {
+        while (true)
+        {
+            if(buildOnce) surface2D.UpdateNavMesh(surface2D.navMeshData);
+            yield return null;
+        }
+    }
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         StartCoroutine(CreateStage());
     }
@@ -23,9 +39,9 @@ public class StageGenerator : MonoBehaviour
             var currOut = GetOppositeDirection(currIn);
             var currPos = -checkedRoom.DoorsPostition[i];
 
-            if (IsDirectionInList(currOut, currentRoom.DoorsDirections) &&
-                CheckIfDirection(currOut, currIn) 
+            if (IsDirectionInList(currOut, currentRoom.DoorsDirections)
                 && stage.CheckIsPlaceFree(GetNextRoomPosition(currentPos, currOut))
+                && stage.CheckNextDoorRoom(GetNextRoomPosition(currentPos, currOut), checkedRoom.DoorsDirections)
                 )
             {
                 dirIn.Add(currIn);
@@ -76,31 +92,34 @@ public class StageGenerator : MonoBehaviour
             }
             else if (emptySpots.Count >= Mathf.Floor(roomCount - currentRoomCount))
             {
-                //for(int i = 0; i < emptySpots.Count; i++)
-                //{
-                var i = 0;
                 yield return new WaitForSeconds(0.2f);
                 List<Direction> neededDirection = new List<Direction>();
+                var emptySpotFounded = new List<int[,]>();
                 for(int j = 0; j < emptySpots.Count; j++)
                 {
-                    if (emptySpots[j] == emptySpots[0])
-                        neededDirection.Add(GetOppositeDirection(openDoorDirections[i]));
+                    if (emptySpots[j][0, 0] == emptySpots[0][0, 0] && emptySpots[j][0, 1] == emptySpots[0][0, 1])
+                    {
+                        emptySpotFounded.Add(emptySpots[j]);
+                        neededDirection.Add(GetOppositeDirection(openDoorDirections[j]));
+                    }
                 }
-                var emptySpotPosition = (float)emptySpots[0][0, 0] * Vector3.right * 6.5f + (float)emptySpots[0][0, 1] * Vector3.up * 5.5f;
+                var emptySpotPosition =(float)emptySpots[0][0, 0] * Vector3.right * (GridSettings.gridSize.x - GridSettings.wallSize) + (float)emptySpots[0][0, 1] * Vector3.up * (GridSettings.gridSize.y - GridSettings.wallSize);
 
                 var prefab = FindSuitableRoom(neededDirection);
 
-                currentRoom = Instantiate(prefab, emptySpotPosition * 2f, Quaternion.identity, stage.transform).GetComponent<Room>();
+                currentRoom = Instantiate(prefab, emptySpotPosition, Quaternion.identity, stage.transform).GetComponent<Room>();
                 currentRoom.gameObject.name += currentRoomCount;
                 stage.AddRoom(currentRoom, emptySpots[0]);
 
-                Debug.Log("StageGenerator, Start : new room = " + currentRoom.gameObject.ToString());
-                Debug.Log("StageGenerator, Start : openDoors = " + openDoors);
-                emptySpots.RemoveAt(0);
-                openDoors--;
-                openDoorDirections.RemoveAt(0);
+                Debug.Log("StageGenerator, Start : CLOSING EMPTY SPOTS = " + currentRoom.gameObject.ToString());
+                for(int i = 0; i < emptySpotFounded.Count; i++)
+                {
+                    var id = emptySpots.IndexOf(emptySpotFounded[i]);
+                    emptySpots.Remove(emptySpotFounded[i]);
+                    openDoors--;
+                    openDoorDirections.RemoveAt(id);
+                }
                 currentRoomCount++;
-                //}
             }
             else if (currentRoom != null)
             {
@@ -127,9 +146,11 @@ public class StageGenerator : MonoBehaviour
                     {
                         yield return new WaitForSeconds(0.2f);
                         var pickedRoomNb = Random.Range(0, retainedRoom.Count - 1);
-                        currentRoom = Instantiate(retainedRoom[pickedRoomNb], doorPos[pickedRoomNb] * 2 + currentRoom.transform.position, Quaternion.identity, stage.transform).GetComponent<Room>();
+                        var currentRoomPos = GetNextRoomPosition(doorMatrixPos, dirOut[pickedRoomNb]); 
+                        var emptySpotPosition = (float)currentRoomPos[0, 0] * Vector3.right * (GridSettings.gridSize.x - GridSettings.wallSize) + (float)currentRoomPos[0, 1] * Vector3.up * (GridSettings.gridSize.y - GridSettings.wallSize);
+
+                        currentRoom = Instantiate(retainedRoom[pickedRoomNb], emptySpotPosition, Quaternion.identity, stage.transform).GetComponent<Room>();
                         currentRoom.gameObject.name += currentRoomCount;
-                        var currentRoomPos = GetNextRoomPosition(doorMatrixPos, dirOut[pickedRoomNb]);
                         stage.AddRoom(currentRoom, currentRoomPos);
 
                         //openDoors += currentRoom.DoorsDirections.Length - 2;
@@ -143,7 +164,6 @@ public class StageGenerator : MonoBehaviour
                                 //&& openDoorDirections[i] == dirOut[pickedRoomNb]
                                 )
                             {
-                                Debug.Log("StageGenerator, Start : close emptySpots i = " + emptySpots[i][0,0] + " ," + +emptySpots[i][0, 1]);
                                 openDoors--;
                                 emptySpots.RemoveAt(i);
                                 openDoorDirections.RemoveAt(i);
@@ -162,8 +182,7 @@ public class StageGenerator : MonoBehaviour
                             }
                         }
 
-                        Debug.Log("StageGenerator, Start : new room = " + currentRoom.gameObject.ToString());
-                        Debug.Log("StageGenerator, Start : openDoors = " + openDoors);
+                        Debug.Log("StageGenerator, Start : NEW ROOM = " + currentRoom.gameObject.ToString());
                         currentRoomCount++;
                     }
                     else
@@ -194,6 +213,16 @@ public class StageGenerator : MonoBehaviour
             }
         }
         stage.StartSettingUpStage();
+
+        yield return new WaitForSeconds(0.2f);
+
+        surface2D.BuildNavMeshAsync();
+
+        yield return new WaitForSeconds(0.2f);
+
+        buildOnce = true;
+
+
     }
 
     private GameObject FindSuitableRoom(List<Direction> neededDirection)

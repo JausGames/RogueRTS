@@ -7,29 +7,54 @@ using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
-    public UnityEvent updateMinionPosition;
+    [HideInInspector]
+    public UnityEvent updateArmyEvent;
 
-    [SerializeField] NavMeshAgent agent;
 
     [SerializeField] Vector2 move = Vector2.zero;
     [SerializeField] Vector2 look = Vector2.zero;
+    [SerializeField] float speed = 50f;
+    [SerializeField] float maxSpeed = 15f;
+    [SerializeField] Rigidbody2D body;
+    [SerializeField] AnimationCurve accelerationCurve;
 
     private void Awake()
     {
-        agent.updateRotation = false;
-        agent.updateUpAxis = false;
+        body = GetComponent<Rigidbody2D>();
+        if (updateArmyEvent == null)
+            updateArmyEvent = new UnityEvent();
     }
 
     private void Update()
     {
-        if(move.magnitude > 0.1f)
+        var currSpeed = body.velocity.sqrMagnitude;
+
+        Debug.Log("Playercontroller, Update : currSpeed = " + currSpeed);
+
+        if (move.magnitude > 0.1f && currSpeed < maxSpeed)
         {
-            agent.SetDestination(transform.position + (Vector3)move);
-            Invoke("updateMinionPosition", 0f);
+            body.velocity = body.velocity.magnitude * move;
+            var speedFactor = accelerationCurve.Evaluate(currSpeed / maxSpeed);
+            body.AddForce(move * speed * speedFactor * Time.deltaTime, ForceMode2D.Impulse);
+        }
+        else if (move.magnitude > 0.1f && body.velocity.sqrMagnitude >= maxSpeed)
+        {
+            body.velocity = body.velocity.magnitude * move;
+        }
+        else
+        {
+            body.velocity /= 10f;
         }
 
-        var angle = Vector3.SignedAngle(transform.up, look, transform.forward);
-        transform.Rotate(transform.forward * angle);
+        if (look.magnitude > 0.1f)
+        {
+            var angle = Vector3.SignedAngle(transform.up, look, transform.forward);
+            transform.Rotate(transform.forward * angle);
+        }
+        else body.angularVelocity /= 10f;
+
+
+        updateArmyEvent.Invoke();
     }
 
     public void SetMove(Vector2 move)
@@ -45,5 +70,17 @@ public class PlayerController : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawLine(transform.position, transform.position + (Vector3)move);
+    }
+
+    void ForceForwardDirection(Vector3 localVelocity)
+    {
+        //moslty have forward speed
+        var driftSpeedRatio = Mathf.Pow(localVelocity.x, 2f) / Mathf.Pow(Mathf.Abs(localVelocity.x) + Mathf.Abs(localVelocity.y), 2f);
+        //var breakRatio = carSettings.stopDriftingCurve.Evaluate(driftSpeedRatio);
+        var breakRatio = 0.2f;
+        localVelocity.x *= breakRatio;
+        //body.velocity = Vector3.Lerp(body.velocity, transform.TransformDirection(localVelocity), carSettings.driftSpeedBoostRatio * Time.deltaTime);
+        body.velocity = Vector3.Lerp(body.velocity, transform.TransformDirection(localVelocity), 1.5f * Time.deltaTime);
+        
     }
 }

@@ -15,18 +15,23 @@ public class Army : MonoBehaviour
     private void Start()
     {
         owner = GetComponent<Player>();
+        foreach(Minion min in minions)
+        {
+            min.dieEvent.AddListener(delegate { minions.Remove(min); });
+        }
     }
 
     public void SetMinionsPosition(Vector3 position, Vector3 direction)
     {
         Debug.Log("Army, SetMinionsPositions");
-        int i = 0;
         var count = minions.Count;
-        while (i < count)
+        for (int i = 0; i < count; i++)
         {
-            minions[i].SetPosition(GetLinePosition(i, NbMinionByLine(minions.Count)) * owner.transform.right + upwardOffset * Mathf.Ceil(1 + (i / nbByLine)) * owner.transform.up + position);
-            minions[i].SetRotation(direction);
-            i++;
+            if(!minions[i].Fighting)
+            {
+                minions[i].SetPosition(GetLinePosition(i, NbMinionByLine(minions.Count)) * owner.transform.right + upwardOffset * Mathf.Ceil(1 + (i / nbByLine)) * owner.transform.up + position);
+                minions[i].SetRotation(direction);
+            }
         }
     }
 
@@ -45,6 +50,7 @@ public class Army : MonoBehaviour
     internal void AddMinion(Minion minion)
     {
         minions.Add(minion);
+        minion.dieEvent.AddListener(delegate { minions.Remove(minion); });
     }
 
     int NbMinionByLine(int nbTotal)

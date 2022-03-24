@@ -26,20 +26,63 @@ public class Stage : MonoBehaviour
         }
         return new int[0,0];
     }
+    public Room GetRoomByPosition(int[,] pos)
+    {
+        for (int i = 0; i < roomList.Count; i++)
+        {
+                if (pos[0, 0] == roomMatrix[i][0, 0] && pos[0, 1] == roomMatrix[i][0, 1]) return roomList[i];
+            
+        }
+        return null;
+    }
     public bool CheckIsPlaceFree(int[,] place)
     {
-        Debug.Log("StageGenerator, GetNextRoomPosition : place checked = [" + place[0, 0] + ", " + place[0, 1] + "]");
-
         for (int i = 0; i < roomList.Count; i++)
         {
             if (roomMatrix[i][0, 0] == place[0, 0] && roomMatrix[i][0, 1] == place[0, 1])
             {
-
-                Debug.Log("StageGenerator, GetNextRoomPosition : place founded = [" + roomMatrix[i][0, 1] + ", " + roomMatrix[i][0, 1] + "]");
                 return false;
             }
         }
         return true;
+    }
+
+    public bool CheckNextDoorRoom(int[,] vs, Direction[] doorsDirections)
+    {
+        var roomIsOk = true;
+
+        var northMatrix = new int[1, 2] { { vs[0, 0], vs[0, 1] + 1 } };
+        var southMatrix = new int[1, 2] { { vs[0, 0], vs[0, 1] - 1 } };
+        var eastMatrix = new int[1, 2] { { vs[0, 0] + 1, vs[0, 1] } };
+        var westMatrix = new int[1, 2] { { vs[0, 0] - 1, vs[0, 1] } };
+
+        if (GetRoomByPosition(northMatrix))
+            if(IsDirectionInList(Direction.North, doorsDirections) 
+            != IsDirectionInList(Direction.South, GetRoomByPosition(northMatrix).DoorsDirections))
+                roomIsOk = false;
+        if (GetRoomByPosition(southMatrix))
+            if(IsDirectionInList(Direction.South, doorsDirections) 
+            != IsDirectionInList(Direction.North, GetRoomByPosition(southMatrix).DoorsDirections))
+                roomIsOk = false;
+        if (GetRoomByPosition(eastMatrix))
+            if(IsDirectionInList(Direction.Est, doorsDirections) 
+            != IsDirectionInList(Direction.West, GetRoomByPosition(eastMatrix).DoorsDirections))
+                roomIsOk = false;
+        if (GetRoomByPosition(westMatrix))
+            if(IsDirectionInList(Direction.West, doorsDirections) 
+            != IsDirectionInList(Direction.Est, GetRoomByPosition(westMatrix).DoorsDirections))
+                roomIsOk = false;
+
+        return roomIsOk;
+
+    }
+    bool IsDirectionInList(Direction dirChecked, Direction[] Roomdirections)
+    {
+        foreach (Direction dir in Roomdirections)
+        {
+            if (dir == dirChecked) return true;
+        }
+        return false;
     }
 
     public void StartSettingUpStage()

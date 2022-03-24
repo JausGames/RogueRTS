@@ -13,7 +13,7 @@ public class CamFollow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = Vector3.Lerp(transform.position, follow.position + offsetPosition, positionClampSpeed);
+        if(follow) transform.position = Vector3.Lerp(transform.position, follow.position + offsetPosition, positionClampSpeed);
         //.rotation = Quaternion.Lerp(transform.rotation, follow.rotation, rotationClampSpeed);
     }
 }

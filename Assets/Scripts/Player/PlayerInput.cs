@@ -44,4 +44,10 @@ public class PlayerInput : MonoBehaviour
         var isPerformed = context.performed;
         if(isPerformed) player.Attack(null);
     }
+    public void OnAction(CallbackContext context)
+    {
+        if (player == null) return;
+        var isPerformed = context.performed;
+        if (isPerformed) player.TryAction();
+    }
 }
