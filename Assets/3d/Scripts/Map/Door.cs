@@ -12,8 +12,9 @@ public class Door : MonoBehaviour
 
 
 
-        /*var stageGen = FindObjectOfType<StageGenerator>();
-        stageGen.UpdateNavMesh();*/
+        var stageGen = FindObjectOfType<StageGenerator>();
+        Debug.Log("Door broken");
+        stageGen.UpdateNavMesh();
 
     }
 }

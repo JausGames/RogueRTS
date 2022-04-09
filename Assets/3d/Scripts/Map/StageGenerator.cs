@@ -2,10 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.SceneManagement;
+#endif
 
 
 public class StageGenerator : MonoBehaviour
-{
+{/*
+
+    [SerializeField]
+    int surface.agentTypeID;
+    public int agentTypeID { get { return surface.agentTypeID; } set { surface.agentTypeID = value; } }
+
+    [SerializeField]
+    CollectObjects surface.collectObjects = CollectObjects.All;
+    public CollectObjects collectObjects { get { return surface.collectObjects; } set { surface.collectObjects = value; } }
+
+
+    [SerializeField]
+    LayerMask surface.layerMask = ~0;
+    public LayerMask layerMask { get { return surface.layerMask; } set { surface.layerMask = value; } }*/
+
     [SerializeField] NavMeshSurface surface;
     [SerializeField] List<GameObject> roomPrefabs = new List<GameObject>();
     [SerializeField] List<Direction[]> roomDoorsDirections = new List<Direction[]>();
@@ -17,9 +35,153 @@ public class StageGenerator : MonoBehaviour
     [SerializeField] Stage stage;
 
 
-    internal void UpdateNavMesh()
+    void AppendModifierVolumes(ref List<NavMeshBuildSource> sources)
     {
+#if UNITY_EDITOR
+        var myStage = StageUtility.GetStageHandle(gameObject);
+        if (!myStage.IsValid())
+            return;
+#endif
+        // Modifiers
+        List<NavMeshModifierVolume> modifiers;
+        if (surface.collectObjects == CollectObjects.Children)
+        {
+            modifiers = new List<NavMeshModifierVolume>(GetComponentsInChildren<NavMeshModifierVolume>());
+            modifiers.RemoveAll(x => !x.isActiveAndEnabled);
+        }
+        else
+        {
+            modifiers = NavMeshModifierVolume.activeModifiers;
+        }
 
+        foreach (var m in modifiers)
+        {
+            if ((surface.layerMask & (1 << m.gameObject.layer)) == 0)
+                continue;
+            if (!m.AffectsAgentType(surface.agentTypeID))
+                continue;
+#if UNITY_EDITOR
+            if (!myStage.Contains(m.gameObject))
+                continue;
+#endif
+            var mcenter = m.transform.TransformPoint(m.center);
+            var scale = m.transform.lossyScale;
+            var msize = new Vector3(m.size.x * Mathf.Abs(scale.x), m.size.y * Mathf.Abs(scale.y), m.size.z * Mathf.Abs(scale.z));
+
+            var src = new NavMeshBuildSource();
+            src.shape = NavMeshBuildSourceShape.ModifierBox;
+            src.transform = Matrix4x4.TRS(mcenter, m.transform.rotation, Vector3.one);
+            src.size = msize;
+            src.area = m.area;
+            sources.Add(src);
+        }
+    }
+
+    List<NavMeshBuildSource> CollectSources()
+    {
+        var sources = new List<NavMeshBuildSource>();
+        var markups = new List<NavMeshBuildMarkup>();
+
+        List<NavMeshModifier> modifiers;
+        if (surface.collectObjects == CollectObjects.Children)
+        {
+            modifiers = new List<NavMeshModifier>(GetComponentsInChildren<NavMeshModifier>());
+            modifiers.RemoveAll(x => !x.isActiveAndEnabled);
+        }
+        else
+        {
+            modifiers = NavMeshModifier.activeModifiers;
+        }
+
+        foreach (var m in modifiers)
+        {
+            if ((surface.layerMask & (1 << m.gameObject.layer)) == 0)
+                continue;
+            if (!m.AffectsAgentType(surface.agentTypeID))
+                continue;
+            var markup = new NavMeshBuildMarkup();
+            markup.root = m.transform;
+            markup.overrideArea = m.overrideArea;
+            markup.area = m.area;
+            markup.ignoreFromBuild = m.ignoreFromBuild;
+            markups.Add(markup);
+        }
+
+#if UNITY_EDITOR
+        if (!EditorApplication.isPlaying)
+        {
+            if (surface.collectObjects == CollectObjects.All)
+            {
+                UnityEditor.AI.NavMeshBuilder.CollectSourcesInStage(
+                    null, surface.layerMask, surface.useGeometry, surface.defaultArea, markups, gameObject.scene, sources);
+            }
+            else if (surface.collectObjects == CollectObjects.Children)
+            {
+                UnityEditor.AI.NavMeshBuilder.CollectSourcesInStage(
+                    transform, surface.layerMask, surface.useGeometry, surface.defaultArea, markups, gameObject.scene, sources);
+            }
+            else if (surface.collectObjects == CollectObjects.Volume)
+            {
+                Matrix4x4 localToWorld = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
+                var worldBounds = GetWorldBounds(localToWorld, new Bounds(surface.center, surface.size));
+
+                UnityEditor.AI.NavMeshBuilder.CollectSourcesInStage(
+                    worldBounds, surface.layerMask, surface.useGeometry, surface.defaultArea, markups, gameObject.scene, sources);
+            }
+        }
+        else
+#endif
+        {
+            if (surface.collectObjects == CollectObjects.All)
+            {
+                NavMeshBuilder.CollectSources(null, surface.layerMask, surface.useGeometry, surface.defaultArea, markups, sources);
+            }
+            else if (surface.collectObjects == CollectObjects.Children)
+            {
+                NavMeshBuilder.CollectSources(transform, surface.layerMask, surface.useGeometry, surface.defaultArea, markups, sources);
+            }
+            else if (surface.collectObjects == CollectObjects.Volume)
+            {
+                Matrix4x4 localToWorld = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
+                var worldBounds = GetWorldBounds(localToWorld, new Bounds(surface.center, surface.size));
+                NavMeshBuilder.CollectSources(worldBounds, surface.layerMask, surface.useGeometry, surface.defaultArea, markups, sources);
+            }
+        }
+
+        if (surface.ignoreNavMeshAgent)
+            sources.RemoveAll((x) => (x.component != null && x.component.gameObject.GetComponent<NavMeshAgent>() != null));
+
+        if (surface.ignoreNavMeshObstacle)
+            sources.RemoveAll((x) => (x.component != null && x.component.gameObject.GetComponent<NavMeshObstacle>() != null));
+
+        AppendModifierVolumes(ref sources);
+
+        return sources;
+    }
+
+    static Vector3 Abs(Vector3 v)
+    {
+        return new Vector3(Mathf.Abs(v.x), Mathf.Abs(v.y), Mathf.Abs(v.z));
+    }
+    static Bounds GetWorldBounds(Matrix4x4 mat, Bounds bounds)
+    {
+        var absAxisX = Abs(mat.MultiplyVector(Vector3.right));
+        var absAxisY = Abs(mat.MultiplyVector(Vector3.up));
+        var absAxisZ = Abs(mat.MultiplyVector(Vector3.forward));
+        var worldPosition = mat.MultiplyPoint(bounds.center);
+        var worldSize = absAxisX * bounds.size.x + absAxisY * bounds.size.y + absAxisZ * bounds.size.z;
+        return new Bounds(worldPosition, worldSize);
+    }
+
+    public void UpdateNavMesh()
+    {
+        var data = surface.navMeshData;
+        var setting = surface.GetBuildSettings();
+        //var bounds = new Bounds(Vector3.zero, new Vector3(14f, 1f, 12f));
+        var bounds = new Bounds(Vector3.zero, new Vector3(140f, 1f, 120f));
+        var sources = CollectSources();
+        Debug.Log("UpdateNavMesh + sources = " + sources);
+        NavMeshBuilder.UpdateNavMeshDataAsync(data, setting, sources, bounds);
     }
 
 

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.4366756, g: 0.48427194, b: 0.5645252, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -190,6 +190,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: StageGenerator (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6424887467681999032, guid: 6e5e1209dbc7d894eb5381c464c97016,
+        type: 3}
+      propertyPath: m_CollectObjects
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6424887467681999032, guid: 6e5e1209dbc7d894eb5381c464c97016,
+        type: 3}
+      propertyPath: m_LayerMask.m_Bits
+      value: 65
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1605426010408349846, guid: 6e5e1209dbc7d894eb5381c464c97016, type: 3}
     - {fileID: 492113656889231033, guid: 6e5e1209dbc7d894eb5381c464c97016, type: 3}
@@ -299,7 +309,7 @@ PrefabInstance:
     - target: {fileID: 4229908006521760277, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
       propertyPath: enemyLayer.m_Bits
-      value: 256
+      value: 128
       objectReference: {fileID: 0}
     - target: {fileID: 4736359163381438491, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
@@ -473,6 +483,11 @@ PrefabInstance:
       propertyPath: m_Center.y
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 1761476415124634092, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 91226c5cceda69a49aea431c5f30e6a5, type: 2}
     - target: {fileID: 4229908006521760277, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
       propertyPath: enemyLayer.m_Bits
@@ -610,7 +625,7 @@ PrefabInstance:
     - target: {fileID: 4229908006521760277, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
       propertyPath: enemyLayer.m_Bits
-      value: 256
+      value: 128
       objectReference: {fileID: 0}
     - target: {fileID: 4736359163381438491, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
@@ -736,6 +751,11 @@ PrefabInstance:
       propertyPath: m_Center.y
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 1761476415124634092, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 91226c5cceda69a49aea431c5f30e6a5, type: 2}
     - target: {fileID: 4229908006521760277, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
       propertyPath: enemyLayer.m_Bits
@@ -865,6 +885,11 @@ PrefabInstance:
       propertyPath: m_Center.y
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 1761476415124634092, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 91226c5cceda69a49aea431c5f30e6a5, type: 2}
     - target: {fileID: 4229908006521760277, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
       propertyPath: enemyLayer.m_Bits
@@ -879,6 +904,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6580758800517878200, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7691128446250889796, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
@@ -1052,7 +1082,7 @@ PrefabInstance:
     - target: {fileID: 4229908006521760277, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
       propertyPath: enemyLayer.m_Bits
-      value: 256
+      value: 128
       objectReference: {fileID: 0}
     - target: {fileID: 4736359163381438491, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
@@ -1178,6 +1208,11 @@ PrefabInstance:
       propertyPath: m_Center.y
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 1761476415124634092, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 91226c5cceda69a49aea431c5f30e6a5, type: 2}
     - target: {fileID: 4229908006521760277, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
       propertyPath: enemyLayer.m_Bits
@@ -1315,7 +1350,7 @@ PrefabInstance:
     - target: {fileID: 4229908006521760277, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
       propertyPath: enemyLayer.m_Bits
-      value: 256
+      value: 128
       objectReference: {fileID: 0}
     - target: {fileID: 4736359163381438491, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
@@ -1465,7 +1500,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 0.635
@@ -1516,13 +1551,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!4 &772581302 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7691128446250889848, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
@@ -1769,7 +1804,7 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 1
+  orthographic: 0
   orthographic size: 5
   m_Depth: -1
   m_CullingMask:
@@ -1856,6 +1891,11 @@ PrefabInstance:
       propertyPath: m_Center.y
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 1761476415124634092, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 91226c5cceda69a49aea431c5f30e6a5, type: 2}
     - target: {fileID: 4229908006521760277, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
       propertyPath: enemyLayer.m_Bits
@@ -2041,7 +2081,7 @@ PrefabInstance:
     - target: {fileID: 4229908006521760277, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
       propertyPath: enemyLayer.m_Bits
-      value: 256
+      value: 128
       objectReference: {fileID: 0}
     - target: {fileID: 4736359163381438491, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
@@ -2157,6 +2197,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1944051479}
     m_Modifications:
+    - target: {fileID: 1761476415124634092, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 91226c5cceda69a49aea431c5f30e6a5, type: 2}
     - target: {fileID: 7691128446250889796, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
       propertyPath: m_Name
@@ -2244,7 +2289,7 @@ PrefabInstance:
     - target: {fileID: 4229908006521760277, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
       propertyPath: enemyLayer.m_Bits
-      value: 256
+      value: 128
       objectReference: {fileID: 0}
     - target: {fileID: 4736359163381438491, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
@@ -2432,6 +2477,11 @@ PrefabInstance:
       propertyPath: m_Center.y
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 1761476415124634092, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 91226c5cceda69a49aea431c5f30e6a5, type: 2}
     - target: {fileID: 4229908006521760277, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
       propertyPath: enemyLayer.m_Bits
@@ -2569,7 +2619,7 @@ PrefabInstance:
     - target: {fileID: 4229908006521760277, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
       propertyPath: enemyLayer.m_Bits
-      value: 256
+      value: 128
       objectReference: {fileID: 0}
     - target: {fileID: 4736359163381438491, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
@@ -2741,7 +2791,7 @@ PrefabInstance:
     - target: {fileID: 4229908006521760277, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
       propertyPath: enemyLayer.m_Bits
-      value: 256
+      value: 128
       objectReference: {fileID: 0}
     - target: {fileID: 4736359163381438491, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
@@ -2867,6 +2917,11 @@ PrefabInstance:
       propertyPath: m_Center.y
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 1761476415124634092, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 91226c5cceda69a49aea431c5f30e6a5, type: 2}
     - target: {fileID: 4229908006521760277, guid: 5cfab249de9d9a0468a7d70dfd7151c4,
         type: 3}
       propertyPath: enemyLayer.m_Bits
