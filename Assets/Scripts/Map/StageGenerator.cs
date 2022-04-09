@@ -8,27 +8,69 @@ public class StageGenerator : MonoBehaviour
     [SerializeField] NavMeshSurface2d surface2D;
     [SerializeField] List<GameObject> roomPrefabs = new List<GameObject>();
     [SerializeField] List<Direction[]> roomDoorsDirections = new List<Direction[]>();
+
+
     [SerializeField] List<Vector3[]> roomDoorPositions = new List<Vector3[]>();
     [SerializeField] int roomCount = 10;
     [SerializeField] bool buildOnce = false;
     //Vector2 GridSetting.gridSize = new Vector2(6.75f, 5.75f);
     [SerializeField] Stage stage;
 
-    
 
-    IEnumerator Start()
+
+    /*IEnumerator Start()
     {
         while (true)
         {
             if(buildOnce) surface2D.UpdateNavMesh(surface2D.navMeshData);
             yield return null;
         }
-    }
+    }*/
 
     // Start is called before the first frame update
+
+
+    internal void UpdateNavMesh()
+    {
+
+        /*var sources = surface2D.CollectSources();
+        var sourcesBounds = new Bounds(Vector3.zero, new Vector3(100 * 2f + 14f, 1f, 100 * 2f + 12f));
+        NavMeshBuilder.UpdateNavMeshDataAsync(surface2D.navMeshData, surface2D.GetBuildSettings(), sources, sourcesBounds);
+        */
+
+        var room = FindObjectsOfType<Room>();
+        for (int i = 0; i < room.Length; i++)
+        {
+            //room[i].CalculateNavMesh();
+        }
+
+        /*var room = FindObjectsOfType<Room>();
+        float minX = -0, minY = -0, maxX = 0, maxY = 0;
+        for (int i = 0; i < room.Length; i++)
+        {
+            Debug.Log("StageGenerator, UpdateNavMesh : size x = " + room[i].GetBounds().size.x + transform.position.x + ", y = " + room[i].GetBounds().size.y + transform.position.y);
+            if (room[i].GetBounds().size.x + room[i].transform.position.x < minX) minX = room[i].GetBounds().size.x + room[i].transform.position.x;
+            if (room[i].GetBounds().size.z + room[i].transform.position.y < minY) minY = room[i].GetBounds().size.z + room[i].transform.position.y;
+            if (room[i].GetBounds().size.x + room[i].transform.position.x > maxX) maxX = room[i].GetBounds().size.x + room[i].transform.position.x;
+            if (room[i].GetBounds().size.z + room[i].transform.position.y > maxY) maxY = room[i].GetBounds().size.z + room[i].transform.position.y;
+        }
+        var x = maxX >= -minX ? maxX : minX;
+        var y = maxY >= -minY ? maxY : minY;
+
+        Debug.Log("StageGenerator, UpdateNavMesh : x = " + x + ", y = " + y);
+
+        var sourcesBounds = new Bounds(Vector3.zero, new Vector3(x * 2f + 14f, 1f, y * 2f + 12f));
+
+        var sources = surface2D.CollectSources();
+        NavMeshBuilder.UpdateNavMeshDataAsync(surface2D.navMeshData, surface2D.GetBuildSettings(), sources, sourcesBounds);
+*/
+    }
+
+
     void Awake()
     {
         StartCoroutine(CreateStage());
+        
     }
 
     bool CheckIfRoomIsSuitable (Room currentRoom, Room checkedRoom, ref List<Direction> dirOut, ref List<Direction> dirIn, ref List<Vector3> doorPos, ref List<Room> retainedRoom, int[,] currentPos)
@@ -73,7 +115,7 @@ public class StageGenerator : MonoBehaviour
 
             if (currentRoomCount == 0)
             {
-                currentRoom = Instantiate(roomPrefabs[Random.Range(0, roomPrefabs.Count - 1)], Vector3.zero, Quaternion.identity, stage.transform).GetComponent<Room>();
+                currentRoom = Instantiate(roomPrefabs[Random.Range(0, roomPrefabs.Count - 1)], Vector3.zero, roomPrefabs[0].transform.rotation, stage.transform).GetComponent<Room>();
                 currentRoom.gameObject.name += currentRoomCount;
 
                 //openDoors += currentRoom.DoorsDirections.Length;
@@ -107,7 +149,7 @@ public class StageGenerator : MonoBehaviour
 
                 var prefab = FindSuitableRoom(neededDirection);
 
-                currentRoom = Instantiate(prefab, emptySpotPosition, Quaternion.identity, stage.transform).GetComponent<Room>();
+                currentRoom = Instantiate(prefab, emptySpotPosition, prefab.transform.rotation, stage.transform).GetComponent<Room>();
                 currentRoom.gameObject.name += currentRoomCount;
                 stage.AddRoom(currentRoom, emptySpots[0]);
 
@@ -149,7 +191,7 @@ public class StageGenerator : MonoBehaviour
                         var currentRoomPos = GetNextRoomPosition(doorMatrixPos, dirOut[pickedRoomNb]); 
                         var emptySpotPosition = (float)currentRoomPos[0, 0] * Vector3.right * (GridSettings.gridSize.x - GridSettings.wallSize) + (float)currentRoomPos[0, 1] * Vector3.up * (GridSettings.gridSize.y - GridSettings.wallSize);
 
-                        currentRoom = Instantiate(retainedRoom[pickedRoomNb], emptySpotPosition, Quaternion.identity, stage.transform).GetComponent<Room>();
+                        currentRoom = Instantiate(retainedRoom[pickedRoomNb], emptySpotPosition, retainedRoom[pickedRoomNb].transform.rotation, stage.transform).GetComponent<Room>();
                         currentRoom.gameObject.name += currentRoomCount;
                         stage.AddRoom(currentRoom, currentRoomPos);
 
@@ -216,7 +258,7 @@ public class StageGenerator : MonoBehaviour
 
         yield return new WaitForSeconds(0.2f);
 
-        surface2D.BuildNavMeshAsync();
+        //surface2D.BuildNavMeshAsync();
 
         yield return new WaitForSeconds(0.2f);
 

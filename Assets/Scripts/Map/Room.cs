@@ -16,20 +16,11 @@ public enum Direction
 public class Room : MonoBehaviour
 {
     [SerializeField] Direction[] doorsDirections;
+    [SerializeField] bool _navMeshBuildOnce = false;
     [SerializeField] Vector3[] doorsPostition;
     [SerializeField] List<GameObject> roomFloorPrefabs = new List<GameObject>();
     [SerializeField] List<GameObject> doorPrefabs = new List<GameObject>();
     [SerializeField] List<GameObject> wallPrefabs = new List<GameObject>();
-
-
-    // The size of the build bounds
-    public Vector3 m_Size = new Vector3(14.0f, 12.0f, 2.0f);
-    // The center of the build
-    public Transform m_Tracked;
-    List<NavMeshBuildSource> m_Sources = new List<NavMeshBuildSource>();
-    AsyncOperation m_Operation;
-    NavMeshDataInstance m_Instance;
-    NavMeshData m_NavMesh;
 
     public Direction[] DoorsDirections { get => doorsDirections; set => doorsDirections = value; }
     public Vector3[] DoorsPostition { get => doorsPostition; set => doorsPostition = value; }
@@ -39,73 +30,34 @@ public class Room : MonoBehaviour
         GenerateRoom();
     }
 
-    IEnumerator Start()
-    {
-        while (true)
-        {
-            UpdateNavMesh(true);
-            yield return m_Operation;
-        }
-    }
-    void OnEnable()
-    {
-        // Construct and add navmesh
-        m_NavMesh = new NavMeshData();
-        m_Instance = NavMesh.AddNavMeshData(m_NavMesh);
-        if (m_Tracked == null)
-            m_Tracked = transform;
-        UpdateNavMesh(false);
-    }
-    void UpdateNavMesh(bool asyncUpdate = false)
-    {
-        NavMeshSourceTag.Collect(ref m_Sources);
-        var defaultBuildSettings = NavMesh.GetSettingsByID(0);
-        var bounds = QuantizedBounds();
-
-        if (asyncUpdate)
-            m_Operation = NavMeshBuilder.UpdateNavMeshDataAsync(m_NavMesh, defaultBuildSettings, m_Sources, bounds);
-        else
-            NavMeshBuilder.UpdateNavMeshData(m_NavMesh, defaultBuildSettings, m_Sources, bounds);
-    }
-    Bounds QuantizedBounds()
-    {
-        // Quantize the bounds to update only when theres a 10% change in size
-        var center = m_Tracked ? m_Tracked.position : transform.position;
-        return new Bounds(Quantize(center, 0.1f * m_Size), m_Size);
-    }
-    static Vector3 Quantize(Vector3 v, Vector3 quant)
-    {
-        float x = quant.x * Mathf.Floor(v.x / quant.x);
-        float y = quant.y * Mathf.Floor(v.y / quant.y);
-        float z = quant.z * Mathf.Floor(v.z / quant.z);
-        return new Vector3(x, y, z);
-    }
     public void GenerateRoom()
     {
-        Instantiate(roomFloorPrefabs[0], transform.position, Quaternion.identity, transform);
+        Instantiate(roomFloorPrefabs[0], transform.position, doorPrefabs[0].transform.rotation, transform);
 
         if(IsContainingDoor(Direction.North))
         {
-            Instantiate(doorPrefabs[0], transform.position, Quaternion.identity, transform);
+            Instantiate(doorPrefabs[0], transform.position, doorPrefabs[0].transform.rotation, transform);
             //GridSettings.gridSize
         }
         else
-            Instantiate(wallPrefabs[0], transform.position, Quaternion.identity, transform);
+            Instantiate(wallPrefabs[0], transform.position, doorPrefabs[0].transform.rotation, transform);
 
         if (IsContainingDoor(Direction.Est))
-            Instantiate(doorPrefabs[1], transform.position, Quaternion.identity, transform);
+            Instantiate(doorPrefabs[1], transform.position, doorPrefabs[0].transform.rotation, transform);
         else
-            Instantiate(wallPrefabs[1], transform.position, Quaternion.identity, transform);
+            Instantiate(wallPrefabs[1], transform.position, doorPrefabs[0].transform.rotation, transform);
 
         if (IsContainingDoor(Direction.South))
-            Instantiate(doorPrefabs[2], transform.position, Quaternion.identity, transform);
+            Instantiate(doorPrefabs[2], transform.position, doorPrefabs[0].transform.rotation, transform);
         else
-            Instantiate(wallPrefabs[2], transform.position, Quaternion.identity, transform);
+            Instantiate(wallPrefabs[2], transform.position, doorPrefabs[0].transform.rotation, transform);
 
         if (IsContainingDoor(Direction.West))
-            Instantiate(doorPrefabs[3], transform.position, Quaternion.identity, transform);
+            Instantiate(doorPrefabs[3], transform.position, doorPrefabs[0].transform.rotation, transform);
         else
-            Instantiate(wallPrefabs[3], transform.position, Quaternion.identity, transform);
+            Instantiate(wallPrefabs[3], transform.position, doorPrefabs[0].transform.rotation, transform);
+
+        CalculateNavMesh();
     }
 
     bool IsContainingDoor(Direction dir)
@@ -115,5 +67,62 @@ public class Room : MonoBehaviour
             if (d == dir) return true;
         }
         return false;
+    }
+    public Bounds GetBounds()
+    {
+        return new Bounds(Vector3.zero, new Vector3(14f, 1f, 12f));
+    }
+
+    public void CalculateNavMesh()
+    {
+        //var surface2d = GetComponent<NavMeshSurface2d>();
+        var surface2d = GetComponent<NavMeshSurface2d>();
+        //surface2d.UpdateNavMesh(surface2d.navMeshData);
+
+
+        var sources = surface2d.CollectSources();
+        var boundsCenter = Vector3.right * transform.position.x + Vector3.up * transform.position.z + Vector3.forward * transform.position.y;
+        var sourcesBounds = new Bounds(Vector3.zero, new Vector3(14f, 1f, 12f));
+
+        Debug.Log("Room, CalculateNavMesh : sourcesBounds = " + sourcesBounds);
+
+        // Use unscaled bounds - this differs in behaviour from e.g. collider components.
+        // But is similar to reflection probe - and since navmesh data has no scaling support - it is the right choice here.
+        //var sourcesBounds = new Bounds(surface2d.center, Door.Abs(surface2d.size));
+        //if (surface2d.collectObjects != CollectObjects2d.Volume) sourcesBounds = surface2d.CalculateWorldBounds(sources);
+        if (_navMeshBuildOnce || true)
+        {
+            //NavMeshBuilder.UpdateNavMeshDataAsync(surface2d.navMeshData, surface2d.GetBuildSettings(), sources, sourcesBounds);
+
+            var data = NavMeshBuilder.BuildNavMeshData(surface2d.GetBuildSettings(),
+                    sources, sourcesBounds, transform.position, transform.rotation);
+
+
+            if (data != null)
+            {
+                data.name = gameObject.name;
+                surface2d.RemoveData();
+                surface2d.navMeshData = data;
+                if (isActiveAndEnabled)
+                    surface2d.AddData();
+            }
+        }
+        else
+        {
+            //surface2d.BuildNavMesh();
+            var data = NavMeshBuilder.BuildNavMeshData(surface2d.GetBuildSettings(),
+                    sources, sourcesBounds, transform.position, transform.rotation);
+
+
+            if (data != null)
+            {
+                data.name = gameObject.name;
+                surface2d.RemoveData();
+                surface2d.navMeshData = data;
+                if (isActiveAndEnabled)
+                    surface2d.AddData();
+            }
+            _navMeshBuildOnce = true;
+        }
     }
 }

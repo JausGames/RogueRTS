@@ -31,6 +31,8 @@ public class Minion : Hitable
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
+
+        
     }
 
     private void Update()

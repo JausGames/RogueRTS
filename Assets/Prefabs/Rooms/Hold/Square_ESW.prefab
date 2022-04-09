@@ -2584,6 +2584,7 @@ GameObject:
   - component: {fileID: 5514721848864695558}
   - component: {fileID: 7838277149230514850}
   - component: {fileID: -9097510550232288324}
+  - component: {fileID: -658750006765828603}
   m_Layer: 0
   m_Name: Square_ESW
   m_TagString: Untagged
@@ -2598,7 +2599,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8714519180634354003}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2606,7 +2607,7 @@ Transform:
   - {fileID: 5986718597270283855}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!114 &7838277149230514850
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2620,6 +2621,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   doorsDirections: 010000000200000003000000
+  _navMeshBuildOnce: 0
   doorsPostition:
   - {x: 6.75, y: 0, z: 0}
   - {x: 0, y: -5.75, z: 0}
@@ -2636,8 +2638,6 @@ MonoBehaviour:
   - {fileID: 8714519180634354003, guid: 7dec65e86e618324f945dc88585b7173, type: 3}
   - {fileID: 8714519180634354003, guid: 69246173a45ea4648897f8c22dffbda6, type: 3}
   - {fileID: 8714519180634354003, guid: c8674ac79a7d8b74eb1b98e223f1df58, type: 3}
-  m_Size: {x: 14, y: 12, z: 2}
-  m_Tracked: {fileID: 0}
 --- !u!114 &-9097510550232288324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2650,3 +2650,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2676506e994562744aed848907d9a76e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-658750006765828603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8714519180634354003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 148387606d0ccd84fa326ca211f274ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_OverrideByGrid: 0
+  m_UseMeshPrefab: {fileID: 0}
+  m_CompressBounds: 0
+  m_OverrideVector: {x: 1, y: 1, z: 1}
+  m_DefaultArea: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.06666667
+  m_BuildHeightMesh: 0
+  m_HideEditorLogs: 0
+  m_NavMeshData: {fileID: 0}
