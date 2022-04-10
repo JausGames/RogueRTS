@@ -9,13 +9,15 @@ public class Projectile : MonoBehaviour
     [SerializeField] float radius = 5f;
     [SerializeField] float range = 5f;
     [SerializeField] Vector3 startPosition = Vector3.zero;
-    private LayerMask enemyLayer;
+    [SerializeField] LayerMask enemyLayer;
+    [SerializeField] LayerMask willDestroyLayer;
 
     public float Speed { get => speed; set => speed = value; }
     public float Damage { get => damage; set => damage = value; }
     public float Radius { get => radius; set => radius = value; }
     public float Range { get => range; set => range = value; }
     public LayerMask EnemyLayer { get => enemyLayer; set => enemyLayer = value; }
+    public LayerMask WillDestroyLayer { get => willDestroyLayer; set => willDestroyLayer = value; }
 
     private void Awake()
     {
@@ -37,7 +39,7 @@ public class Projectile : MonoBehaviour
                 Hitable minion = col.gameObject.GetComponent<Hitable>();
                 if (!touchedEnnemy.Contains(minion) && minion != null)
                 {
-                    Debug.Log("Minion touched = " + minion);
+                    Debug.Log("Minion touched by projectile : " + minion);
                     touchedEnnemy.Add(minion);
                 }
             }
@@ -52,6 +54,13 @@ public class Projectile : MonoBehaviour
             touchedEnnemy[closestEnnemyId].GetHit(damage);
             Destroy(gameObject);
         }
+
+
+        cols = Physics.OverlapSphere(transform.position, radius, WillDestroyLayer);
+        if(cols.Length != 0)
+            Destroy(gameObject);
+
+
     }
 
     void OnDrawGizmos()

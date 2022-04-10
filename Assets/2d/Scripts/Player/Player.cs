@@ -31,10 +31,6 @@ namespace Gameplay.Player2d
             var cols = Physics2D.OverlapAreaAll(transform.position - 0.5f * transform.right, transform.position + 0.5f * transform.transform.right + 2f * transform.transform.up, doorLayer);
             if (cols.Length > 0)
             {
-                /*foreach(Collider2D col in cols)
-                {
-                    if (col && col.gameObject) Destroy(col.gameObject);
-                }*/
                 Destroy(cols[0].gameObject);
             }
         }

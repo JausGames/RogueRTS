@@ -15,7 +15,7 @@ abstract public class AttackData : ScriptableObject
 
     public float HitRange { get => hitRange;}
 
-    virtual public void Attack(Transform owner, Transform hitPoint, LayerMask enemyLayer)
+    virtual public void Attack(Transform owner, Transform hitPoint, LayerMask enemyLayer, LayerMask friendLayer)
     {
         if (nextHit > Time.time) return;
         nextHit = Time.time + coolDown;

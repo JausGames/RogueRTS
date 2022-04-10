@@ -12,7 +12,7 @@ public class RangeAttack : AttackData
     public float ProjectileSpeed { get => projectileSpeed; set => projectileSpeed = value; }
     public GameObject Projectile { get => projectile; set => projectile = value; }
 
-    public override void Attack(Transform owner, Transform hitPoint, LayerMask enemyLayer)
+    public override void Attack(Transform owner, Transform hitPoint, LayerMask enemyLayer, LayerMask friendLayer)
     {
         //base.Attack(owner, hitPoint, enemyLayer);
 
@@ -26,5 +26,6 @@ public class RangeAttack : AttackData
         projectileCmp.Radius = hitRadius;
         projectileCmp.Speed = projectileSpeed;
         projectileCmp.EnemyLayer = enemyLayer;
+        projectileCmp.WillDestroyLayer = ~friendLayer & ~(1 << projectileGo.layer);
     }
 }

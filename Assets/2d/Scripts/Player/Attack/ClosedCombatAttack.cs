@@ -8,7 +8,7 @@ namespace Gameplay.Player2d
     [CreateAssetMenu(fileName = "ClosedCombat", menuName = "Combat2d Objects/Closed Combat/Basic Hit", order = 1)]
     public class ClosedCombatAttack : AttackData
     {
-        override public void Attack(Transform owner, Transform hitPoint, LayerMask enemyLayer)
+        override public void Attack(Transform owner, Transform hitPoint, LayerMask enemyLayer, LayerMask friendLayer)
         {
             //base.Attack(owner, hitPoint, enemyLayer);
 

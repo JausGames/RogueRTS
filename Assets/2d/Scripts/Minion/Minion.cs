@@ -18,6 +18,7 @@ namespace Gameplay.Player2d
         [SerializeField] AttackData attackData;
         [SerializeField] public Transform hitPoint;
         [SerializeField] public LayerMask enemyLayer;
+        [SerializeField] public LayerMask friendLayer;
         [SerializeField] Player owner;
         NavMeshAgent agent;
 
@@ -110,7 +111,7 @@ namespace Gameplay.Player2d
         }
         public override void Attack(Hitable victim)
         {
-            attackData.Attack(transform, hitPoint, enemyLayer);
+            attackData.Attack(transform, hitPoint, enemyLayer, friendLayer);
         }
         public Vector2 FindNearestPointOnLine(Vector2 origin, Vector2 direction, Vector2 point)
         {

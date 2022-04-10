@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 4341906420074837442}
   - component: {fileID: 7057125660377209682}
   - component: {fileID: 8882293813509367203}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +117,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea22e2b77e245af489aaaf0f3cc1dda0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackData: {fileID: 11400000, guid: d7b491e613518544fa54284d4ee6008c, type: 2}
+  attackData: {fileID: 11400000, guid: 62316012c5187f34faff530e1f8eaa17, type: 2}
   hitPoint: {fileID: 8056384619115336812}
   ennemyLayer:
     serializedVersion: 2
@@ -294,7 +294,6 @@ MonoBehaviour:
   minions: []
   sideOffset: 0.35
   upwardOffset: 0.35
-  nbByLine: 0
   nbByLineCurve:
     serializedVersion: 2
     m_Curve:
@@ -337,7 +336,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3151243886459972469}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -369,7 +368,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8056384619115336812}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: HitPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -403,7 +402,7 @@ GameObject:
   - component: {fileID: 8844994300053463264}
   - component: {fileID: 2180363564654294697}
   - component: {fileID: 3390987269252357205}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -418,8 +417,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5515067932890313840}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.64, z: 0.2}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalPosition: {x: 0, y: 0.64, z: 0.14}
+  m_LocalScale: {x: 0.32, y: 0.2, z: 0.11}
   m_Children: []
   m_Father: {fileID: 3151243886459972469}
   m_RootOrder: 1
@@ -497,7 +496,7 @@ GameObject:
   - component: {fileID: 7787927708141725141}
   - component: {fileID: 7878098538107238152}
   - component: {fileID: 3101422098820130126}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -633,6 +632,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: AttackPRTCL
+      objectReference: {fileID: 0}
+    - target: {fileID: 8313970788498630543, guid: d23c8e4b5d454684997c8908a7b8c5e0,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d23c8e4b5d454684997c8908a7b8c5e0, type: 3}

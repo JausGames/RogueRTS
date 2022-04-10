@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f62569fd6ef5c4fb104f8068df7786, type: 3}
   m_Name: BascClosedCombat
   m_EditorClassIdentifier: 
-  damage: 0.5
+  damage: 0.2
   hitRadius: 0.15
-  hitRange: 0.5
+  hitRange: 0.35
   coolDown: 0.5
   nextHit: 0
   attackParticles: {fileID: 1144125543912469989, guid: 6e57b7a3e14b74643a866b69c10427e4,

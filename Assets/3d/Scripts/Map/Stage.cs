@@ -6,48 +6,138 @@ using UnityEngine;
 public class Stage : MonoBehaviour
 {
     [SerializeField] List<Room> roomList = new List<Room>();
-    [SerializeField] int[][,] roomMatrix = new int[50][,];
+    [SerializeField] List<int[,]> spotList = new List<int[,]>();
+    [SerializeField] Room[,] roomMatrix = new Room[50, 50];
     [SerializeField] GameObject startGO, endGO;
 
+    private Room startRoom;
+    private int[,] startPos = new int[1, 2];
+
+    private Room endRoom;
+    private int[,] endPos = new int[1, 2];
+
     public List<Room> RoomList { get => roomList; }
-    public int[][,] RoomMatrix { get => roomMatrix; }
+    public Room[,] RoomMatrix { get => roomMatrix; }
+
+    public List<int[,]> SpotList { get => spotList; set => spotList = value; }
+
+    public List<Room> SelectableRoomList
+    {
+        get
+        {
+            var selectable = new List<Room>();
+            selectable.AddRange(roomList);
+            selectable.Remove(startRoom);
+            selectable.Remove(endRoom);
+            return selectable;
+        }
+    }
+    public float MaxX
+    {
+        get
+        {
+            var value = -Mathf.Infinity;
+            for (int i = 0; i < spotList.Count; i++)
+            {
+                if (spotList[i][0, 0] > value) value = spotList[i][0, 0];
+            }
+            Debug.Log("Stage, MaxX = " + value * GridSettings.gridSize.x);
+            return value * GridSettings.gridSize.y;
+        }
+    }
+    public float MinX
+    {
+        get
+        {
+            var value = Mathf.Infinity;
+            for (int i = 0; i < spotList.Count; i++)
+            {
+                if (spotList[i][0, 0] < value) value = spotList[i][0, 0];
+            }
+            Debug.Log("Stage, MinX = " + value * GridSettings.gridSize.x);
+            return value * GridSettings.gridSize.y;
+        }
+    }
+    public float MaxY
+    {
+        get
+        {
+            var value = -Mathf.Infinity;
+            for (int i = 0; i < spotList.Count; i++)
+            {
+                if (spotList[i][0, 1] > value) value = spotList[i][0, 1];
+            }
+            Debug.Log("Stage, MaxY = " + value * GridSettings.gridSize.y); 
+            return value * GridSettings.gridSize.y;
+        }
+    }
+    public float MinY
+    {
+        get
+        {
+            var value = Mathf.Infinity;
+            for (int i = 0; i < spotList.Count; i++)
+            {
+                if (spotList[i][0, 1] < value) value = spotList[i][0, 1];
+            }
+            Debug.Log("Stage, MinY = " + value * GridSettings.gridSize.y);
+            return value * GridSettings.gridSize.y;
+        }
+    }
 
     public void AddRoom(Room room, int[,] place)
     {
+        StageTrace.Trace("Stage, AddRoom : try add room[" + roomList.Count + "] = [" + (place[0, 0]) + "," + (place[0, 1]) + "]");
+        if (roomList.Contains(room)) return;
+        StageTrace.Trace("Stage, AddRoom : try add room[" + roomList.Count + "] = [" + (place[0, 0]) + "," + (place[0, 1]) + "]");
         roomList.Add(room);
-        roomMatrix[roomList.Count - 1] = new int[1, 2] { { place[0, 0], place[0, 1] } };
+        spotList.Add(new int[,] { { place[0, 0], place[0, 1] } });
+        roomMatrix[place[0, 0] + 25, place[0, 1] + 25] = room;
     }
 
     public int[,] GetPositionByRoom(Room room)
     {
         for (int i = 0; i < roomList.Count; i++)
-        {
-            if (roomList[i] == room) return roomMatrix[i];
-        }
+            if (roomList[i] == room) 
+                return spotList[i];
+
         return new int[0, 0];
     }
     public Room GetRoomByPosition(int[,] pos)
     {
-        for (int i = 0; i < roomList.Count; i++)
-        {
-            if (pos[0, 0] == roomMatrix[i][0, 0] && pos[0, 1] == roomMatrix[i][0, 1]) return roomList[i];
+        for (int i = 0; i < spotList.Count; i++)
+            if (pos[0,0] == spotList[i][0,0] && pos[0, 1] == spotList[i][0, 1]) 
+                return roomList[i];
 
-        }
         return null;
     }
     public bool CheckIsPlaceFree(int[,] place)
     {
         for (int i = 0; i < roomList.Count; i++)
         {
-            if (roomMatrix[i][0, 0] == place[0, 0] && roomMatrix[i][0, 1] == place[0, 1])
+            if (spotList[i][0, 0] == place[0, 0] && spotList[i][0, 1] == place[0, 1])
             {
                 return false;
             }
         }
         return true;
     }
+    public void SetStageStart(Room room, int[,] pos)
+    {
+        startRoom = room;
+        startPos[0, 0] = pos[0, 0];
+        startPos[0, 1] = pos[0, 1];
+        room.RoomType = Type.Start;
+    }
+    public void SetStageEnd(Room room, int[,] pos)
+    {
+        endRoom = room;
+        endPos[0,0] = pos[0, 0];
+        endPos[0,1] = pos[0, 1];
+        room.RoomType = Type.End;
+    }
 
-    public bool CheckNextDoorRoom(int[,] vs, Direction[] doorsDirections)
+    public bool CheckNextDoorRoom(int[,] vs, List<Direction> doorsDirections)
     {
         var roomIsOk = true;
 
@@ -76,7 +166,7 @@ public class Stage : MonoBehaviour
         return roomIsOk;
 
     }
-    bool IsDirectionInList(Direction dirChecked, Direction[] Roomdirections)
+    bool IsDirectionInList(Direction dirChecked, List<Direction> Roomdirections)
     {
         foreach (Direction dir in Roomdirections)
         {
@@ -87,13 +177,12 @@ public class Stage : MonoBehaviour
 
     public void StartSettingUpStage()
     {
-        var startRoom = roomList[0];
-        var endRoom = roomList[roomList.Count - 1];
-
-
-        for (int i = 0; i < RoomMatrix.Length; i++)
+        for (int i = 0; i < RoomList.Count; i++)
         {
-
+            if (roomList[i].DoorsDirections.Count == 1
+                && roomList[i].RoomType == Type.Default) 
+                roomList[i].RoomType = Type.TroupsBonus;
+            roomList[i].GenerateRoom();
         }
 
         startGO = new GameObject("start");

@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 5
   hitRadius: 0.1
-  hitRange: 3
-  coolDown: 1
+  hitRange: 3.5
+  coolDown: 1.2
   nextHit: 0
   attackParticles: {fileID: 1144125543912469989, guid: 6e57b7a3e14b74643a866b69c10427e4,
     type: 3}
   projectile: {fileID: 7492541652951800509, guid: 9f22196ec83b6674284cc5f0115568c8,
     type: 3}
-  projectileSpeed: 2
+  projectileSpeed: 4

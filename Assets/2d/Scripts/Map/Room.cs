@@ -82,7 +82,8 @@ namespace Map.Stage2d
             //surface2d.UpdateNavMesh(surface2d.navMeshData);
 
 
-            var sources = surface2d.CollectSources();
+            // var sources = surface2d.CollectSources();
+           var sources = new List<NavMeshBuildSource>();
             var boundsCenter = Vector3.right * transform.position.x + Vector3.up * transform.position.z + Vector3.forward * transform.position.y;
             var sourcesBounds = new Bounds(Vector3.zero, new Vector3(14f, 1f, 12f));
 
