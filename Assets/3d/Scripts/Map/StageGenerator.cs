@@ -230,23 +230,7 @@ public class StageGenerator : MonoBehaviour
         if (dirIn.Count > 0) return true;
         else return false;
     }
-    class DoorNeedData
-    {
-        public List<Room> roomList = new List<Room>();
-        public List<Vector3> posList = new List<Vector3>();
-        public List<Direction> dirList = new List<Direction>();
-
-        public void AddNeededDoor(Room room, Vector3 pos, Direction dir)
-        {
-            for(int i = 0; i < roomList.Count; i++)
-            {
-                if (roomList[i] == room && dirList[i] == dir) return; 
-            }
-            roomList.Add(room);
-            posList.Add(pos);
-            dirList.Add(dir);
-        }
-    }
+    
     IEnumerator CreateStage()
     {
 
@@ -255,6 +239,7 @@ public class StageGenerator : MonoBehaviour
             roomDoorsDirections.Add(roomPrefabs[i].GetComponent<Room>().DoorsDirections);
             roomDoorPositions.Add(roomPrefabs[i].GetComponent<Room>().DoorsPostition);
         }*/
+        StageTrace.CreateTrace();
 
         Debug.Log("StageGenerator, GenerateStage : Start");
         Debug.Log("StageGenerator, GenerateStage : min room = " + minRoom);
@@ -268,12 +253,16 @@ public class StageGenerator : MonoBehaviour
         var signY = (int)Mathf.Sign(Random.Range(-1, 1));
 
         var startRoom = Instantiate(roomPrefabs[Random.Range(0, roomPrefabs.Count - 1)], Vector3.zero, roomPrefabs[0].transform.rotation, stage.transform).GetComponent<Room>();
+        
         var endRoom = Instantiate(roomPrefabs[Random.Range(0, roomPrefabs.Count - 1)],
             signX * halfLength * GridSettings.gridSize.x * Vector3.right + (pathLenght - halfLength) * signY * GridSettings.gridSize.y * Vector3.forward,
             roomPrefabs[0].transform.rotation, stage.transform).GetComponent<Room>();
 
         var startPos = new int[,] { { 0, 0 } };
         var endPos = new int[,] { { signX * halfLength, (pathLenght - halfLength) * signY } };
+
+        stage.SetStageStart(startRoom, startPos);
+        stage.SetStageEnd(endRoom, endPos);
 
         Debug.Log("StageGenerator, GenerateStage : start pos = [" + (startPos[0, 0]) + "," + (startPos[0, 1]) + "]");
         Debug.Log("StageGenerator, GenerateStage : end pos = [" + (endPos[0, 0]) + "," + (endPos[0, 1]) + "]");
@@ -287,13 +276,18 @@ public class StageGenerator : MonoBehaviour
 
         while(stage.RoomList.Count <= minRoom)
         {
-            //var randomPathLenght = Random.Range(1, Mathf.Min(6, minRoom - stage.RoomList.Count));
-            var randomPathLenght = Random.Range(1, Mathf.Min(6, 6));
+            int randomPathLenght;
+            if (minRoom - stage.RoomList.Count < 4) randomPathLenght = 4;
+            else randomPathLenght = Random.Range(2, Mathf.Min(7, minRoom - stage.RoomList.Count));
+
+            StageTrace.Trace("StageGenerator, GenerateStage : randomPathLenght = " + randomPathLenght);
 
             halfLength = Random.Range(1, randomPathLenght);
-            //var sign = Mathf.Sign(Random.Range(-1f, 1f));
+            StageTrace.Trace("StageGenerator, GenerateStage : halfLength = " + halfLength);
             signX = (int)Mathf.Sign(Random.Range(-1, 1));
+            StageTrace.Trace("StageGenerator, GenerateStage : signX = " + signX);
             signY = (int)Mathf.Sign(Random.Range(-1, 1));
+            StageTrace.Trace("StageGenerator, GenerateStage : signY = " + signY);
 
 
             StageTrace.Trace("StageGenerator, GenerateStage : stage.RoomList.Count = " + stage.RoomList.Count);
@@ -302,20 +296,29 @@ public class StageGenerator : MonoBehaviour
             if (stage.CheckIsPlaceFree(new int[,] { { startPos[0,0] + halfLength * signX, startPos[0, 1] + (randomPathLenght - halfLength) * signY } }))
             { 
 
-                var roomId = Random.Range(0, stage.RoomList.Count - 1);
-                startRoom = stage.RoomList[roomId];
-                endRoom = Instantiate(roomPrefabs[Random.Range(0, roomPrefabs.Count - 1)],
-                    startRoom.transform.position + signX * halfLength * GridSettings.gridSize.x * Vector3.right + (randomPathLenght - halfLength) * signY * GridSettings.gridSize.y * Vector3.forward,
-                    roomPrefabs[0].transform.rotation, stage.transform).GetComponent<Room>();
-                startPos = stage.SpotList[roomId];
-                endPos = new int[,] { { startPos[0, 0] + signX * halfLength, startPos[0, 1] + (randomPathLenght - halfLength) * signY } };
+                var roomId = Random.Range(0, stage.SelectableRoomList.Count - 1);
+                startRoom = stage.SelectableRoomList[roomId];
+                startPos = new int[,] { { stage.GetPositionByRoom(startRoom)[0, 0], stage.GetPositionByRoom(startRoom)[0, 1] } };
+                var endX = signX * halfLength;
+                var endY = (randomPathLenght - halfLength) * signY;
 
-                StageTrace.Trace("StageGenerator, GenerateStage : Create path");
-                StageTrace.Trace("StageGenerator, GenerateStage : start pos = [" + (startPos[0, 0]) + "," + (startPos[0, 1]) + "]");
-                StageTrace.Trace("StageGenerator, GenerateStage : end pos = [" + (endPos[0, 0]) + "," + (endPos[0, 1]) + "]");
-                CreatePath(doorData, startRoom, endRoom, startPos, endPos);
+                if (stage.CheckIsPlaceFree(new int[,] { { startPos[0, 0] + endX, startPos[0, 1] + endY} }))
+                {
+                    endRoom = Instantiate(roomPrefabs[Random.Range(0, roomPrefabs.Count - 1)],
+                        startRoom.transform.position + endX * GridSettings.gridSize.x * Vector3.right + endY * GridSettings.gridSize.y * Vector3.forward,
+                        roomPrefabs[0].transform.rotation, stage.transform).GetComponent<Room>();
+                    endPos = new int[,] { { startPos[0, 0] + endX, startPos[0, 1] + endY } };
+
+                    yield return null;
+                    StageTrace.Trace("StageGenerator, GenerateStage : Create path");
+                    StageTrace.Trace("StageGenerator, GenerateStage : start pos = [" + (startPos[0, 0]) + "," + (startPos[0, 1]) + "]");
+                    StageTrace.Trace("StageGenerator, GenerateStage : end pos = [" + (endPos[0, 0]) + "," + (endPos[0, 1]) + "]");
+                    CreatePath(doorData, startRoom, endRoom, startPos, endPos);
+                }
             }
         }
+
+
 
         CreateDoors(doorData);
 
@@ -325,7 +328,6 @@ public class StageGenerator : MonoBehaviour
 
         surface.BuildNavMesh();
 
-        StageTrace.ExportTrace();
         yield return null;
     }
 
@@ -333,103 +335,116 @@ public class StageGenerator : MonoBehaviour
     {
         for (int i = 0; i < doorData.roomList.Count; i++)
         {
+            Door door = null;
+            var nextRoomPos = new int[,] { { stage.GetPositionByRoom(doorData.roomList[i])[0,0], stage.GetPositionByRoom(doorData.roomList[i])[0, 1] } };
+            StageTrace.Trace("StageGenerator, CreateDoors : room pos = [" + nextRoomPos[0,0] + "," + nextRoomPos[0, 1] + "]");
             switch (doorData.dirList[i])
             {
                 case Direction.North:
 
                     StageTrace.Trace("StageGenerator, CreateDoors : roomList["+i+ "] = [" + doorData.roomList[i].transform.position.x / GridSettings.gridSize.x + "," + doorData.roomList[i].transform.position.y / GridSettings.gridSize.y + "]");
                     StageTrace.Trace("StageGenerator, CreateDoors : door NORTH"); 
-                    Instantiate(doorPrefabs[0], doorData.roomList[i].transform.position, doorPrefabs[0].transform.rotation, doorData.roomList[i].transform);
+                    door = Instantiate(doorPrefabs[0], doorData.roomList[i].transform.position, doorPrefabs[0].transform.rotation, doorData.roomList[i].transform).GetComponentInChildren<Door>();
+                    nextRoomPos[0, 1] += 1;
                     break;
                 case Direction.Est:
                     StageTrace.Trace("StageGenerator, CreateDoors : roomList[" + i + "] = [" + doorData.roomList[i].transform.position.x / GridSettings.gridSize.x + "," + doorData.roomList[i].transform.position.y / GridSettings.gridSize.y + "]");
                     StageTrace.Trace("StageGenerator, CreateDoors : door EST");
-                    Instantiate(doorPrefabs[1], doorData.roomList[i].transform.position, doorPrefabs[1].transform.rotation, doorData.roomList[i].transform);
+                    door = Instantiate(doorPrefabs[1], doorData.roomList[i].transform.position, doorPrefabs[1].transform.rotation, doorData.roomList[i].transform).GetComponentInChildren<Door>();
+                    nextRoomPos[0, 0] += 1;
                     break;
                 case Direction.South:
                     StageTrace.Trace("StageGenerator, CreateDoors : roomList[" + i + "] = [" + doorData.roomList[i].transform.position.x / GridSettings.gridSize.x + "," + doorData.roomList[i].transform.position.y / GridSettings.gridSize.y + "]");
                     StageTrace.Trace("StageGenerator, CreateDoors : door SOUTH");
-                    Instantiate(doorPrefabs[2], doorData.roomList[i].transform.position, doorPrefabs[2].transform.rotation, doorData.roomList[i].transform);
+                    door = Instantiate(doorPrefabs[2], doorData.roomList[i].transform.position, doorPrefabs[2].transform.rotation, doorData.roomList[i].transform).GetComponentInChildren<Door>();
+                    nextRoomPos[0, 1] -= 1;
                     break;
                 case Direction.West:
                     StageTrace.Trace("StageGenerator, CreateDoors : roomList[" + i + "] = [" + doorData.roomList[i].transform.position.x / GridSettings.gridSize.x + "," + doorData.roomList[i].transform.position.y / GridSettings.gridSize.y + "]");
                     StageTrace.Trace("StageGenerator, CreateDoors : door WEST");
-                    Instantiate(doorPrefabs[3], doorData.roomList[i].transform.position, doorPrefabs[3].transform.rotation, doorData.roomList[i].transform);
-                    break;
-                case Direction.None:
+                    door = Instantiate(doorPrefabs[3], doorData.roomList[i].transform.position, doorPrefabs[3].transform.rotation, doorData.roomList[i].transform).GetComponentInChildren<Door>();
+                    nextRoomPos[0, 1] = 1;
                     break;
                 default:
                     break;
             }
+            StageTrace.Trace("StageGenerator, CreateDoors : door = " + door);
+            StageTrace.Trace("StageGenerator, CreateDoors : next room pos = [" + nextRoomPos[0, 0] + "," + nextRoomPos[0, 1] + "]");
+            door.SetConnectedRoom(doorData.roomList[i], doorData.connectedRoomList[i]);
         }
     }
 
     private void CreatePath(DoorNeedData doorData, Room startRoom, Room endRoom, int[,] startPos, int[,] endPos)
     {
-        var currentPos = startPos;
+        var currentPos = new int[,] { { startPos[0, 0], startPos[0, 1] } };
         var currentRoom = startRoom;
         while (!(currentPos[0, 0] == endPos[0, 0] && currentPos[0, 1] == endPos[0, 1]))
         {
             if (currentPos[0, 0] < endPos[0, 0])
             {
-                doorData.AddNeededDoor(currentRoom, GridSettings.gridSize.x * 0.5f * Vector3.right, Direction.Est);
+                var spot = new int[,] { { currentPos[0, 0] + 1, currentPos[0, 1] } };
+                var dir = Direction.Est;
+                StageTrace.Trace("StageGenerator, CreatePath : go " + dir);
 
-                if(!currentRoom.DoorsDirections.Contains(Direction.Est)) currentRoom.DoorsDirections.Add(Direction.Est);
-                if(!stage.CheckIsPlaceFree(new int[,] { { currentPos[0, 0] + 1, currentPos[0, 1] } }))
-                    currentRoom = stage.GetRoomByPosition(new int[,] { { currentPos[0, 0] + 1, currentPos[0, 1] } });
-                else if (!(currentPos[0, 0] + 1 == endPos[0, 0] && currentPos[0, 1] == endPos[0, 1]))
-                    currentRoom = Instantiate(roomPrefabs[Random.Range(0, roomPrefabs.Count - 1)], (currentPos[0, 0] + 1f) * GridSettings.gridSize.x * Vector3.right + (currentPos[0, 1]) * GridSettings.gridSize.y * Vector3.forward, roomPrefabs[0].transform.rotation, stage.transform).GetComponent<Room>();
-                else currentRoom = endRoom;
-                currentRoom.DoorsDirections.Add(Direction.West);
-                currentPos[0, 0] += 1;
+                var newRoom = GetNextRoom(endRoom, endPos, currentPos, currentRoom, dir, spot, doorData);
+                currentRoom = newRoom;
             }
             else if (currentPos[0, 0] > endPos[0, 0])
             {
-                doorData.AddNeededDoor(currentRoom, -GridSettings.gridSize.x * 0.5f * Vector3.right, Direction.West);
+                var dir = Direction.West;
+                var spot = new int[,] { { currentPos[0, 0] - 1, currentPos[0, 1] } };
+                StageTrace.Trace("StageGenerator, CreatePath : go " + dir);
 
-                if (!currentRoom.DoorsDirections.Contains(Direction.West)) currentRoom.DoorsDirections.Add(Direction.West);
-                if (!stage.CheckIsPlaceFree(new int[,] { { currentPos[0, 0] - 1, currentPos[0, 1] } }))
-                    currentRoom = stage.GetRoomByPosition(new int[,] { { currentPos[0, 0] - 1, currentPos[0, 1] } });
-                else if (!(currentPos[0, 0] - 1 == endPos[0, 0] && currentPos[0, 1] == endPos[0, 1]))
-                    currentRoom = Instantiate(roomPrefabs[Random.Range(0, roomPrefabs.Count - 1)], (currentPos[0, 0] - 1f) * GridSettings.gridSize.x * Vector3.right + (currentPos[0, 1]) * GridSettings.gridSize.y * Vector3.forward, roomPrefabs[0].transform.rotation, stage.transform).GetComponent<Room>();
-                else currentRoom = endRoom;
-                currentRoom.DoorsDirections.Add(Direction.Est);
-                currentPos[0, 0] -= 1;
+                var newRoom = GetNextRoom(endRoom, endPos, currentPos, currentRoom, dir, spot, doorData);
+                currentRoom = newRoom;
             }
 
             else if (currentPos[0, 1] < endPos[0, 1])
             {
-                doorData.AddNeededDoor(currentRoom, GridSettings.gridSize.y * 0.5f * Vector3.right, Direction.North);
+                var spot = new int[,] { { currentPos[0, 0], currentPos[0, 1] + 1} };
+                var dir = Direction.North;
+                StageTrace.Trace("StageGenerator, CreatePath : go " + dir);
 
-                if (!currentRoom.DoorsDirections.Contains(Direction.North)) currentRoom.DoorsDirections.Add(Direction.North);
-                if (!stage.CheckIsPlaceFree(new int[,] { { currentPos[0, 0], currentPos[0, 1] + 1} }))
-                    currentRoom = stage.GetRoomByPosition(new int[,] { { currentPos[0, 0], currentPos[0, 1] + 1} });
-                else if (!(currentPos[0, 0] == endPos[0, 0] && currentPos[0, 1] + 1 == endPos[0, 1]))
-                    currentRoom = Instantiate(roomPrefabs[Random.Range(0, roomPrefabs.Count - 1)], (currentPos[0, 0]) * GridSettings.gridSize.x * Vector3.right + (currentPos[0, 1] + 1) * GridSettings.gridSize.y * Vector3.forward, roomPrefabs[0].transform.rotation, stage.transform).GetComponent<Room>();
-                else currentRoom = endRoom;
-                currentRoom.DoorsDirections.Add(Direction.South);
-                currentPos[0, 1] += 1;
+                var newRoom = GetNextRoom(endRoom, endPos, currentPos, currentRoom, dir, spot, doorData);
+                currentRoom = newRoom;
             }
 
             else if (currentPos[0, 1] > endPos[0, 1])
             {
-                doorData.AddNeededDoor(currentRoom, -GridSettings.gridSize.y * 0.5f * Vector3.right, Direction.South);
+                var spot = new int[,] { { currentPos[0, 0], currentPos[0, 1] - 1 } };
+                var dir = Direction.South;
+                StageTrace.Trace("StageGenerator, CreatePath : go " + dir);
 
-                if (!currentRoom.DoorsDirections.Contains(Direction.South)) currentRoom.DoorsDirections.Add(Direction.South);
-                if (!stage.CheckIsPlaceFree(new int[,] { { currentPos[0, 0], currentPos[0, 1] - 1 } }))
-                    currentRoom = stage.GetRoomByPosition(new int[,] { { currentPos[0, 0], currentPos[0, 1] - 1 } });
-                else if (!(currentPos[0, 0] == endPos[0, 0] && currentPos[0, 1] - 1 == endPos[0, 1]))
-                    currentRoom = Instantiate(roomPrefabs[Random.Range(0, roomPrefabs.Count - 1)], (currentPos[0, 0]) * GridSettings.gridSize.x * Vector3.right + (currentPos[0, 1] - 1) * GridSettings.gridSize.y * Vector3.forward, roomPrefabs[0].transform.rotation, stage.transform).GetComponent<Room>();
-                else currentRoom = endRoom;
-                currentRoom.DoorsDirections.Add(Direction.North);
-                currentPos[0, 1] -= 1;
+                var newRoom = GetNextRoom(endRoom, endPos, currentPos, currentRoom, dir, spot, doorData);
+                currentRoom = newRoom;
             }
-            //else currentPos = endPos;
-            Debug.Log("StageGenerator, GenerateStage : current pos = [" + (currentPos[0, 0]) + "," + (currentPos[0, 1]) + "]");
             StageTrace.Trace("StageGenerator, CreatePath : current pos = [" + (currentPos[0, 0]) + "," + (currentPos[0, 1]) + "]");
 
             stage.AddRoom(currentRoom, currentPos);
         }
+    }
+
+    private Room GetNextRoom(Room endRoom, int[,] endPos, int[,] currentPos, Room currentRoom, Direction dir, int[,] spot, DoorNeedData doorData)
+    {
+        Room newRoom;
+
+        if (!stage.CheckIsPlaceFree(spot))
+            newRoom = stage.GetRoomByPosition(spot);
+        else if (!(spot[0, 0] == endPos[0, 0] && spot[0, 1] == endPos[0, 1]))
+            newRoom = Instantiate(roomPrefabs[Random.Range(0, roomPrefabs.Count - 1)], spot[0, 0] * GridSettings.gridSize.x * Vector3.right + spot[0, 1] * GridSettings.gridSize.y * Vector3.forward, roomPrefabs[0].transform.rotation, stage.transform).GetComponent<Room>();
+        else
+            newRoom = endRoom;
+
+        if (!newRoom.DoorsDirections.Contains(GetOppositeDirection(dir))) newRoom.DoorsDirections.Add(GetOppositeDirection(dir));
+        currentPos[0, 0] = spot[0, 0];
+        currentPos[0, 1] = spot[0, 1];
+
+        if (!currentRoom.DoorsDirections.Contains(dir))
+        {
+            currentRoom.DoorsDirections.Add(dir);
+            doorData.AddNeededDoor(currentRoom, Vector3.zero, dir, newRoom);
+        }
+        return newRoom;
     }
 
     private GameObject FindSuitableRoom(List<Direction> neededDirection)
@@ -522,5 +537,25 @@ public class StageGenerator : MonoBehaviour
                 return currentposition;
         }
     }
+    class DoorNeedData
+    {
+        public List<Room> roomList = new List<Room>();
+        public List<Vector3> posList = new List<Vector3>();
+        public List<Direction> dirList = new List<Direction>();
+        public List<Room> connectedRoomList = new List<Room>();
 
+        public void AddNeededDoor(Room room, Vector3 pos, Direction dir, Room connectedRoom)
+        {
+            for (int i = 0; i < roomList.Count; i++)
+            {
+                if (roomList[i] == room && dirList[i] == dir) return;
+            }
+            StageTrace.Trace("DoorNeedData, AddNeededDoor : pos = [" + pos.x + "," + pos.y + "]");
+            StageTrace.Trace("DoorNeedData, AddNeededDoor : dir = " + dir);
+            roomList.Add(room);
+            posList.Add(pos);
+            dirList.Add(dir);
+            connectedRoomList.Add(connectedRoom);
+        }
+    }
 }

@@ -8,6 +8,7 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] AttackData attackData;
     [SerializeField] public Transform hitPoint;
     [SerializeField] public LayerMask ennemyLayer;
+    [SerializeField] public LayerMask friendLayer;
     //private float nextHit;
 
     private void Awake()
@@ -16,6 +17,6 @@ public class PlayerCombat : MonoBehaviour
     }
     public void Attack()
     {
-        attackData.Attack(transform, hitPoint, ennemyLayer);
+        attackData.Attack(transform, hitPoint, ennemyLayer, friendLayer);
     }
 }

@@ -6,8 +6,8 @@ using UnityEngine.Events;
 abstract public class Hitable : MonoBehaviour
 {
     public UnityEvent dieEvent;
-    protected const float MAX_HEALTH = 10f;
-    protected float health = MAX_HEALTH;
+    protected float MAX_HEALTH = 10f;
+    protected float health;
     abstract public void Attack(Hitable victim);
 
     virtual public void GetHit(float damage)

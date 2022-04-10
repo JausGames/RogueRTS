@@ -12,29 +12,51 @@ public enum Direction
     None
 }
 
+public enum Type
+{
+    Start,
+    End,
+    TroupsBonus,
+    Default
+}
+
 
 public class Room : MonoBehaviour
 {
+    [SerializeField] Type roomType = Type.Default;
     [SerializeField] List<Direction> doorsDirections = new List<Direction>();
+
     [SerializeField] bool _navMeshBuildOnce = false;
     [SerializeField] List<Vector3> doorsPostition = new List<Vector3>();
     [SerializeField] List<GameObject> roomFloorPrefabs = new List<GameObject>();
     [SerializeField] List<GameObject> doorPrefabs = new List<GameObject>();
     [SerializeField] List<GameObject> wallPrefabs = new List<GameObject>();
 
+    [SerializeField] List<MinionSpawner> minionSpawnerList = new List<MinionSpawner>();
+    [SerializeField] MinionSpawner minionSpawner;
+
     public List<Direction> DoorsDirections { get => doorsDirections; set => doorsDirections = value; }
     public List<Vector3> DoorsPostition { get => doorsPostition; set => doorsPostition = value; }
+    public Type RoomType { get => roomType; set => roomType = value; }
 
     private void Awake()
     {
         DoorsDirections = new List<Direction>();
         DoorsPostition = new List<Vector3>();
-        //GenerateRoom();
     }
+    public void SetEnnemyCanMove(bool canMove)
+    {
+        var minions = GetComponentsInChildren<Minion>();
+        var sleepingOpponent = new List<Minion>();
 
+        foreach (Minion min in minions)
+            if (min.Owner == null) sleepingOpponent.Add(min);
+
+        foreach (Minion min in sleepingOpponent)
+            min.Moving = canMove;
+    }
     public void GenerateRoom()
     {
-        Instantiate(roomFloorPrefabs[0], transform.position, doorPrefabs[0].transform.rotation, transform);
 
         if (!IsContainingDoor(Direction.North))
             Instantiate(wallPrefabs[0], transform.position, doorPrefabs[0].transform.rotation, transform);
@@ -48,7 +70,29 @@ public class Room : MonoBehaviour
         if (!IsContainingDoor(Direction.West))
             Instantiate(wallPrefabs[3], transform.position, doorPrefabs[0].transform.rotation, transform);
 
-        CalculateNavMesh();
+        switch (roomType)
+        {
+            case Type.Start:
+                Instantiate(roomFloorPrefabs[1], transform.position, doorPrefabs[0].transform.rotation, transform);
+                break;
+            case Type.End:
+                Instantiate(roomFloorPrefabs[2], transform.position, doorPrefabs[0].transform.rotation, transform);
+                break;
+            case Type.TroupsBonus:
+                Instantiate(roomFloorPrefabs[3], transform.position, doorPrefabs[0].transform.rotation, transform);
+                break;
+            case Type.Default:
+                var rndSpawn = Random.Range(0, minionSpawnerList.Count);
+                minionSpawner = new MinionSpawner();
+                minionSpawner.SpawnDataList = new List<SpawnData>();
+                minionSpawner.SpawnDataList.AddRange(minionSpawnerList[rndSpawn].SpawnDataList);
+                minionSpawner.RoomTransform = this.transform;
+                Instantiate(roomFloorPrefabs[0], transform.position, doorPrefabs[0].transform.rotation, transform);
+                minionSpawner.SpawnMinion();
+                break;
+            default:
+                break;
+        }
     }
 
     bool IsContainingDoor(Direction dir)
@@ -60,37 +104,5 @@ public class Room : MonoBehaviour
         }
         return false;
     }
-    public Bounds GetBounds()
-    {
-        return new Bounds(Vector3.zero, new Vector3(14f, 1f, 12f));
-    }
 
-    public void CalculateNavMesh()
-    {
-        //var surface2d = GetComponent<NavMeshSurface2d>();
-        var surface = GetComponent<NavMeshSurface>();
-        //surface2d.UpdateNavMesh(surface2d.navMeshData);
-
-
-        /*var sources = NavMeshBuilder.CollectSources()
-;
-        var boundsCenter = Vector3.right * transform.position.x + Vector3.up * transform.position.z + Vector3.forward * transform.position.y;
-        var sourcesBounds = new Bounds(Vector3.zero, new Vector3(14f, 1f, 12f));
-
-        Debug.Log("Room, CalculateNavMesh : sourcesBounds = " + sourcesBounds);
-
-            var data = NavMeshBuilder.BuildNavMeshData(surface.GetBuildSettings(),
-                    sources, sourcesBounds, transform.position, transform.rotation);
-
-
-            if (data != null)
-            {
-                data.name = gameObject.name;
-                surface.RemoveData();
-                surface.navMeshData = data;
-                if (isActiveAndEnabled)
-                    surface.AddData();
-            }*/
-            
-    }
 }

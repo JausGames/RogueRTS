@@ -9,7 +9,7 @@ public class Army : MonoBehaviour
     [SerializeField] List<Minion> minions = new List<Minion>();
     [SerializeField] float sideOffset = 0.35f;
     [SerializeField] private float upwardOffset = 0.35f;
-    [SerializeField]  private int nbByLine;
+    //[SerializeField]  private int nbByLine;
     [SerializeField]  private AnimationCurve nbByLineCurve;
 
     private void Start()
@@ -25,14 +25,93 @@ public class Army : MonoBehaviour
     {
         Debug.Log("Army, SetMinionsPositions : direction = " + direction);
         var count = minions.Count;
-        for (int i = 0; i < count; i++)
+        var warriors = new List<Minion>();
+        var tanks = new List<Minion>();
+        var rangers = new List<Minion>();
+        var supports = new List<Minion>();
+
+        for (int i = 0; i < minions.Count; i++)
         {
-            if(!minions[i].Fighting)
+            switch (minions[i].MinionType)
             {
-                minions[i].SetPosition(GetLinePosition(i, NbMinionByLine(minions.Count)) * owner.transform.right + upwardOffset * Mathf.Ceil(1 + (i / nbByLine)) * owner.transform.forward + position);
-                minions[i].SetRotation(direction);
+                case Minion.Type.Warrior:
+                    warriors.Add(minions[i]);
+                    break;
+                case Minion.Type.Tank:
+                    tanks.Add(minions[i]);
+                    break;
+                case Minion.Type.Range:
+                    rangers.Add(minions[i]);
+                    break;
+                case Minion.Type.Support:
+                    supports.Add(minions[i]);
+                    break;
+                default:
+                    break;
             }
         }
+        
+        var lastI = 0f;
+        for (int i = 0; i < warriors.Count; i++)
+        {
+            if (!warriors[i].Fighting)
+            {
+                var nbByLine = NbMinionByLine(warriors.Count);
+                lastI = upwardOffset * Mathf.Ceil(1 + (i / nbByLine));
+                var lastPos = GetLinePosition(i, nbByLine) * owner.transform.right + lastI * owner.transform.forward + position;
+                warriors[i].SetPosition(lastPos);
+                warriors[i].SetRotation(direction);
+            }
+        }
+        var tanksBasePos = lastI * owner.transform.forward;
+
+        for (int i = 0; i < tanks.Count; i++)
+        {
+            if (!tanks[i].Fighting)
+            {
+                var nbByLine = NbMinionByLine(tanks.Count);
+                lastI = upwardOffset * Mathf.Ceil(1 + (i / nbByLine));
+                var lastPos = GetLinePosition(i, nbByLine) * owner.transform.right + lastI * owner.transform.forward + position;
+                tanks[i].SetPosition(tanksBasePos + lastPos);
+                tanks[i].SetRotation(direction);
+            }
+        }
+
+        for (int i = 0; i < rangers.Count; i++)
+        {
+            if (!rangers[i].Fighting)
+            {
+                var nbByLine = NbMinionByLine(rangers.Count);
+                lastI = upwardOffset * Mathf.Ceil(1 + (i / nbByLine));
+                var lastPos = GetLinePosition(i, nbByLine) * owner.transform.right - lastI * owner.transform.forward + position;
+                rangers[i].SetPosition(lastPos);
+                rangers[i].SetRotation(direction);
+            }
+        }
+        var supportsBasePos = -lastI * owner.transform.forward;
+
+        for (int i = 0; i < supports.Count; i++)
+        {
+            if (!supports[i].Fighting)
+            {
+                var nbByLine = NbMinionByLine(supports.Count);
+                lastI = upwardOffset * Mathf.Ceil(1 + (i / nbByLine));
+                var lastPos = GetLinePosition(i, nbByLine) * owner.transform.right - lastI * owner.transform.forward + position;
+                supports[i].SetPosition(supportsBasePos + lastPos);
+                supports[i].SetRotation(direction);
+            }
+        }
+        
+        /*for (int i = 0; i < count; i++)
+        {
+            if (!minions[i].Fighting)
+            {
+                var lastI = upwardOffset * Mathf.Ceil(1 + (i / NbMinionByLine(minions.Count)));
+                minions[i].SetPosition(GetLinePosition(i, NbMinionByLine(minions.Count)) * owner.transform.right + lastI * owner.transform.forward + position);
+                minions[i].SetRotation(direction);
+            }
+        }*/
+
     }
 
     float GetLinePosition(int nb, int nbByLine)
@@ -53,9 +132,9 @@ public class Army : MonoBehaviour
         minion.dieEvent.AddListener(delegate { minions.Remove(minion); });
     }
 
-    int NbMinionByLine(int nbTotal)
+    int NbMinionByLine(int nb)
     {
-        nbByLine = (int)Mathf.Floor(nbByLineCurve.Evaluate(nbTotal));
+        var nbByLine = (int)Mathf.Floor(nbByLineCurve.Evaluate(nb));
         //nbByLine = Mathf.Clamp(3, (int)Mathf.Ceil(nbTotal / 4), 9);
 
         return nbByLine;

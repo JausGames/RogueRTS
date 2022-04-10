@@ -16,7 +16,7 @@ namespace Gameplay.Player2d
         public float ProjectileSpeed { get => projectileSpeed; set => projectileSpeed = value; }
         public GameObject Projectile { get => projectile; set => projectile = value; }
 
-        public override void Attack(Transform owner, Transform hitPoint, LayerMask enemyLayer)
+        public override void Attack(Transform owner, Transform hitPoint, LayerMask enemyLayer, LayerMask friendLayer)
         {
             //base.Attack(owner, hitPoint, enemyLayer);
 

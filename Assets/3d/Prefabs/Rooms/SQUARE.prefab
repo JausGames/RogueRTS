@@ -43,12 +43,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98001017344f4e342a496fef98c344e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  doorsDirections: 01000000
+  roomType: 3
+  doorsDirections: 
   _navMeshBuildOnce: 0
-  doorsPostition:
-  - {x: 6.75, y: 0, z: 0}
+  doorsPostition: []
   roomFloorPrefabs:
   - {fileID: 8714519180634354003, guid: f703b91a91d8dcc4aa3bd0e802fc2b8c, type: 3}
+  - {fileID: 8714519180634354003, guid: a656c152746ea044faca914dd6902646, type: 3}
+  - {fileID: 8714519180634354003, guid: f80bb7d8090cd1f49b4707d36d291337, type: 3}
+  - {fileID: 8714519180634354003, guid: 62a6c0c7efaa2ce4293fd9497c35d0fd, type: 3}
   doorPrefabs:
   - {fileID: 8714519180634354003, guid: ff2b71e8623249a4d8dad88c6bec84e5, type: 3}
   - {fileID: 8714519180634354003, guid: 1b0fcf391c0ea4346a98d2602ee592d8, type: 3}
@@ -59,3 +62,9 @@ MonoBehaviour:
   - {fileID: 8714519180634354003, guid: 73c71f36b7ee9e342ad6fffed0d6d153, type: 3}
   - {fileID: 8714519180634354003, guid: 11ef671d4a8208f45a1e2896594b4f6e, type: 3}
   - {fileID: 8714519180634354003, guid: 0e4b3bc10009a9947b088fcae4db2362, type: 3}
+  minionSpawnerList:
+  - {fileID: 11400000, guid: bc636696d76209642a12a611a0db4b5e, type: 2}
+  - {fileID: 11400000, guid: e9d8c91d6ff861847b23ed92e3ebf43f, type: 2}
+  - {fileID: 11400000, guid: 6aa95dafe53aabf43b3ad803e16c605e, type: 2}
+  - {fileID: 11400000, guid: e9da92ca5bebe144681aa2c76a2df52f, type: 2}
+  minionSpawner: {fileID: 0}

@@ -6,20 +6,29 @@ using UnityEngine;
 public static class StageTrace
 {
     static string trace;
+    static int nb;
+    static string dir = "D:\\Unity\\_trace";
     static public void Trace(string trace)
     {
+#if UNITY_EDITOR
         StageTrace.trace += "\n" + trace;
-    }
 
-    static public void ExportTrace()
-    {
-        var dir = "D:\\Unity\\_trace";
-        var fileCount = DirCount(new DirectoryInfo(dir));
-        System.IO.File.WriteAllText(dir + "\\trace_" + fileCount + ".txt", trace);
+        System.IO.File.WriteAllText(dir + "\\trace_" + nb + ".txt", StageTrace.trace);
+#endif
     }
-    static public long DirCount(DirectoryInfo d)
+    static public void CreateTrace()
     {
-        long i = 0;
+
+#if UNITY_EDITOR
+        StageTrace.trace += "---------- START TRACE : " + Time.time + " ----------";
+        nb = DirCount(new DirectoryInfo(dir));
+#endif
+    }
+    static public int DirCount(DirectoryInfo d)
+    {
+
+#if UNITY_EDITOR
+        int i = 0;
         // Add file sizes.
         FileInfo[] fis = d.GetFiles();
         foreach (FileInfo fi in fis)
@@ -28,5 +37,8 @@ public static class StageTrace
                 i++;
         }
         return i;
+#else
+        return 0;
+#endif
     }
 }

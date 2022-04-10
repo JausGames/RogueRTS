@@ -10,9 +10,28 @@ public class Stage : MonoBehaviour
     [SerializeField] Room[,] roomMatrix = new Room[50, 50];
     [SerializeField] GameObject startGO, endGO;
 
+    private Room startRoom;
+    private int[,] startPos = new int[1, 2];
+
+    private Room endRoom;
+    private int[,] endPos = new int[1, 2];
+
     public List<Room> RoomList { get => roomList; }
     public Room[,] RoomMatrix { get => roomMatrix; }
 
+    public List<int[,]> SpotList { get => spotList; set => spotList = value; }
+
+    public List<Room> SelectableRoomList
+    {
+        get
+        {
+            var selectable = new List<Room>();
+            selectable.AddRange(roomList);
+            selectable.Remove(startRoom);
+            selectable.Remove(endRoom);
+            return selectable;
+        }
+    }
     public float MaxX
     {
         get
@@ -66,8 +85,6 @@ public class Stage : MonoBehaviour
         }
     }
 
-    public List<int[,]> SpotList { get => spotList; set => spotList = value; }
-
     public void AddRoom(Room room, int[,] place)
     {
         StageTrace.Trace("Stage, AddRoom : try add room[" + roomList.Count + "] = [" + (place[0, 0]) + "," + (place[0, 1]) + "]");
@@ -81,20 +98,18 @@ public class Stage : MonoBehaviour
     public int[,] GetPositionByRoom(Room room)
     {
         for (int i = 0; i < roomList.Count; i++)
-        {
-            if (roomList[i] == room) return spotList[i];
-        }
+            if (roomList[i] == room) 
+                return spotList[i];
+
         return new int[0, 0];
     }
     public Room GetRoomByPosition(int[,] pos)
     {
         for (int i = 0; i < spotList.Count; i++)
-        {
-            if (pos[0,0] == spotList[i][0,0] && pos[0, 1] == spotList[i][0, 1]) return roomList[i];
+            if (pos[0,0] == spotList[i][0,0] && pos[0, 1] == spotList[i][0, 1]) 
+                return roomList[i];
 
-        }
-        /*if (roomMatrix[pos[0, 0], pos[0, 1]] != null) return roomMatrix[pos[0, 0], pos[0, 1]];*/
-            return null;
+        return null;
     }
     public bool CheckIsPlaceFree(int[,] place)
     {
@@ -106,6 +121,20 @@ public class Stage : MonoBehaviour
             }
         }
         return true;
+    }
+    public void SetStageStart(Room room, int[,] pos)
+    {
+        startRoom = room;
+        startPos[0, 0] = pos[0, 0];
+        startPos[0, 1] = pos[0, 1];
+        room.RoomType = Type.Start;
+    }
+    public void SetStageEnd(Room room, int[,] pos)
+    {
+        endRoom = room;
+        endPos[0,0] = pos[0, 0];
+        endPos[0,1] = pos[0, 1];
+        room.RoomType = Type.End;
     }
 
     public bool CheckNextDoorRoom(int[,] vs, List<Direction> doorsDirections)
@@ -148,12 +177,11 @@ public class Stage : MonoBehaviour
 
     public void StartSettingUpStage()
     {
-        var startRoom = roomList[0];
-        var endRoom = roomList[roomList.Count - 1];
-
-
         for (int i = 0; i < RoomList.Count; i++)
         {
+            if (roomList[i].DoorsDirections.Count == 1
+                && roomList[i].RoomType == Type.Default) 
+                roomList[i].RoomType = Type.TroupsBonus;
             roomList[i].GenerateRoom();
         }
 
