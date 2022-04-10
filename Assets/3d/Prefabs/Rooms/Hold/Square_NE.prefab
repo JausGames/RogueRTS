@@ -2608,12 +2608,12 @@ MonoBehaviour:
   roomFloorPrefabs:
   - {fileID: 8714519180634354003, guid: f703b91a91d8dcc4aa3bd0e802fc2b8c, type: 3}
   doorPrefabs:
-  - {fileID: 8714519180634354003, guid: 1b0fcf391c0ea4346a98d2602ee592d8, type: 3}
   - {fileID: 8714519180634354003, guid: ff2b71e8623249a4d8dad88c6bec84e5, type: 3}
+  - {fileID: 8714519180634354003, guid: 1b0fcf391c0ea4346a98d2602ee592d8, type: 3}
   - {fileID: 8714519180634354003, guid: a5c40f39dcbcf0a4fa386e2c6b530182, type: 3}
   - {fileID: 8714519180634354003, guid: da69d733f6f61324b81011e0675ab611, type: 3}
   wallPrefabs:
-  - {fileID: 8714519180634354003, guid: 73c71f36b7ee9e342ad6fffed0d6d153, type: 3}
   - {fileID: 8714519180634354003, guid: cb6ac260ffe305e4684f95ce562abfe9, type: 3}
+  - {fileID: 8714519180634354003, guid: 73c71f36b7ee9e342ad6fffed0d6d153, type: 3}
   - {fileID: 8714519180634354003, guid: 11ef671d4a8208f45a1e2896594b4f6e, type: 3}
   - {fileID: 8714519180634354003, guid: 0e4b3bc10009a9947b088fcae4db2362, type: 3}

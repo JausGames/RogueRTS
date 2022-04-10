@@ -15,46 +15,37 @@ public enum Direction
 
 public class Room : MonoBehaviour
 {
-    [SerializeField] Direction[] doorsDirections;
+    [SerializeField] List<Direction> doorsDirections = new List<Direction>();
     [SerializeField] bool _navMeshBuildOnce = false;
-    [SerializeField] Vector3[] doorsPostition;
+    [SerializeField] List<Vector3> doorsPostition = new List<Vector3>();
     [SerializeField] List<GameObject> roomFloorPrefabs = new List<GameObject>();
     [SerializeField] List<GameObject> doorPrefabs = new List<GameObject>();
     [SerializeField] List<GameObject> wallPrefabs = new List<GameObject>();
 
-    public Direction[] DoorsDirections { get => doorsDirections; set => doorsDirections = value; }
-    public Vector3[] DoorsPostition { get => doorsPostition; set => doorsPostition = value; }
+    public List<Direction> DoorsDirections { get => doorsDirections; set => doorsDirections = value; }
+    public List<Vector3> DoorsPostition { get => doorsPostition; set => doorsPostition = value; }
 
     private void Awake()
     {
-        GenerateRoom();
+        DoorsDirections = new List<Direction>();
+        DoorsPostition = new List<Vector3>();
+        //GenerateRoom();
     }
 
     public void GenerateRoom()
     {
         Instantiate(roomFloorPrefabs[0], transform.position, doorPrefabs[0].transform.rotation, transform);
 
-        if (IsContainingDoor(Direction.North))
-        {
-            Instantiate(doorPrefabs[0], transform.position, doorPrefabs[0].transform.rotation, transform);
-            //GridSettings.gridSize
-        }
-        else
+        if (!IsContainingDoor(Direction.North))
             Instantiate(wallPrefabs[0], transform.position, doorPrefabs[0].transform.rotation, transform);
 
-        if (IsContainingDoor(Direction.Est))
-            Instantiate(doorPrefabs[1], transform.position, doorPrefabs[0].transform.rotation, transform);
-        else
+        if (!IsContainingDoor(Direction.Est))
             Instantiate(wallPrefabs[1], transform.position, doorPrefabs[0].transform.rotation, transform);
 
-        if (IsContainingDoor(Direction.South))
-            Instantiate(doorPrefabs[2], transform.position, doorPrefabs[0].transform.rotation, transform);
-        else
+        if (!IsContainingDoor(Direction.South))
             Instantiate(wallPrefabs[2], transform.position, doorPrefabs[0].transform.rotation, transform);
 
-        if (IsContainingDoor(Direction.West))
-            Instantiate(doorPrefabs[3], transform.position, doorPrefabs[0].transform.rotation, transform);
-        else
+        if (!IsContainingDoor(Direction.West))
             Instantiate(wallPrefabs[3], transform.position, doorPrefabs[0].transform.rotation, transform);
 
         CalculateNavMesh();
@@ -62,6 +53,7 @@ public class Room : MonoBehaviour
 
     bool IsContainingDoor(Direction dir)
     {
+        if (doorsDirections.Count == 0) return false;
         foreach (Direction d in doorsDirections)
         {
             if (d == dir) return true;
