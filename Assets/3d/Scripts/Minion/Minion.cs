@@ -21,7 +21,6 @@ public class Minion : Hitable
     [Header("Minion characteristic")]
     [SerializeField] Type type;
     [Header("Component")]
-    [SerializeField] AttackData attackData;
     [SerializeField] public Transform hitPoint;
     [SerializeField] public LayerMask enemyLayer;
     [SerializeField] public LayerMask friendLayer;
@@ -36,65 +35,67 @@ public class Minion : Hitable
     public Type MinionType { get => type; set => type = value; }
 
     private void Awake()
-        {
-            if (attackData != null) attackData = Instantiate(attackData);
+    {
+        if (combatData != null) combatData = Instantiate(combatData);
 
-            agent = GetComponent<NavMeshAgent>();
-            //agent.updateRotation = false;
-            agent.updateUpAxis = false;
-        }
+        agent = GetComponent<NavMeshAgent>();
+        //agent.updateRotation = false;
+        agent.updateUpAxis = false;
+        agent.speed = combatData.Speed;
+    }
 
     private void Update()
     {
         if (!Moving) return;
-        var cols = Physics.OverlapSphere(transform.position, attackData.HitRange, enemyLayer);
+        var cols = Physics.OverlapSphere(transform.position, combatData.HitRange, enemyLayer);
 
         if (cols.Length > 0)
         {
             Fighting = true;
-            Attack(null);
 
-            var offset = owner ? (owner.transform.position - cols[0].transform.position).normalized * attackData.HitRange : Vector3.zero;
+            var offset = owner ? (owner.transform.position - cols[0].transform.position).normalized * combatData.HitRange : Vector3.zero;
             SetPosition(cols[0].transform.position + offset);
-        if (attackData.GetType() == typeof(RangeAttack))
-        {
-            var rangedAttack = (RangeAttack)attackData;
-            var opponentVelocity = cols[0].GetComponent<Minion>() ? cols[0].GetComponent<NavMeshAgent>().velocity : (Vector3)cols[0].GetComponent<Rigidbody>().velocity;
-            var opponentPosition = cols[0].transform.position;
-            var opponentLastPosition = (cols[0].transform.position + opponentVelocity.normalized * opponentVelocity.magnitude * attackData.HitRange * (1f / rangedAttack.ProjectileSpeed));
-            //var opponentFuturePosition = FindNearestPointOnLine(cols[0].transform.position, opponentVelocity, hitPoint.position);
-            var opponentFuturePosition = opponentPosition;
-
-            var oppTravelTime = (opponentPosition - (Vector3)opponentFuturePosition).magnitude / opponentVelocity.magnitude;
-            var bulletTravelTime = (hitPoint.position - (Vector3)opponentFuturePosition).magnitude / rangedAttack.ProjectileSpeed;
-
-            var it = 0;
-            var delta = 50f;
-            while (oppTravelTime < bulletTravelTime && opponentFuturePosition != opponentLastPosition && it < 80)
+            if (combatData.GetType() == typeof(RangeAttack))
             {
-                if ((opponentFuturePosition - opponentLastPosition).magnitude < Time.deltaTime) opponentFuturePosition = opponentLastPosition;
-                opponentFuturePosition += (opponentLastPosition - opponentFuturePosition).normalized * Time.deltaTime * delta;
-                oppTravelTime = (opponentPosition - opponentFuturePosition).magnitude / opponentVelocity.magnitude;
-                bulletTravelTime = (hitPoint.position - opponentFuturePosition).magnitude / rangedAttack.ProjectileSpeed;
-                it++;
+                var rangedAttack = (RangeAttack)combatData;
+                var opponentVelocity = cols[0].GetComponent<Minion>() ? cols[0].GetComponent<NavMeshAgent>().velocity : (Vector3)cols[0].GetComponent<Rigidbody>().velocity;
+                var opponentPosition = cols[0].transform.position;
+                var opponentLastPosition = (cols[0].transform.position + opponentVelocity.normalized * opponentVelocity.magnitude * combatData.HitRange * (1f / rangedAttack.ProjectileSpeed));
+                //var opponentFuturePosition = FindNearestPointOnLine(cols[0].transform.position, opponentVelocity, hitPoint.position);
+                var opponentFuturePosition = opponentPosition;
+
+                var oppTravelTime = (opponentPosition - (Vector3)opponentFuturePosition).magnitude / opponentVelocity.magnitude;
+                var bulletTravelTime = (hitPoint.position - (Vector3)opponentFuturePosition).magnitude / rangedAttack.ProjectileSpeed;
+
+                var it = 0;
+                var delta = 50f;
+                while (oppTravelTime < bulletTravelTime && opponentFuturePosition != opponentLastPosition && it < 80)
+                {
+                    if ((opponentFuturePosition - opponentLastPosition).magnitude < Time.deltaTime) opponentFuturePosition = opponentLastPosition;
+                    opponentFuturePosition += (opponentLastPosition - opponentFuturePosition).normalized * Time.deltaTime * delta;
+                    oppTravelTime = (opponentPosition - opponentFuturePosition).magnitude / opponentVelocity.magnitude;
+                    bulletTravelTime = (hitPoint.position - opponentFuturePosition).magnitude / rangedAttack.ProjectileSpeed;
+                    it++;
+                }
+                Debug.Log("it = " + it);
+
+
+
+                Debug.DrawLine(transform.position, opponentFuturePosition, Color.red);
+                Debug.DrawLine(transform.position, opponentLastPosition, Color.black);
+                Debug.DrawLine(opponentPosition, opponentFuturePosition, Color.cyan);
+                //Debug.DrawLine(opponentPosition, opponentLastPosition, Color.blue);
+                var rot = ((Vector3)opponentFuturePosition - transform.position).x * Vector3.right + ((Vector3)opponentFuturePosition - transform.position).z * Vector3.forward;
+                SetRotation(rot.normalized);
+
             }
-            Debug.Log("it = " + it);
+            else
+            {
+                var rot = (cols[0].transform.position - transform.position).x * Vector3.right + (cols[0].transform.position - transform.position).z * Vector3.forward;
+                SetRotation(rot.normalized);
+            }
 
-
-
-            Debug.DrawLine(transform.position, opponentFuturePosition, Color.red);
-            Debug.DrawLine(transform.position, opponentLastPosition, Color.black);
-            Debug.DrawLine(opponentPosition, opponentFuturePosition, Color.cyan);
-            //Debug.DrawLine(opponentPosition, opponentLastPosition, Color.blue);
-            var rot = ((Vector3)opponentFuturePosition - transform.position).x * Vector3.right + ((Vector3)opponentFuturePosition - transform.position).z * Vector3.forward;
-            SetRotation(rot.normalized);
-
-        }
-        else
-        {
-            var rot = (cols[0].transform.position - transform.position).x * Vector3.right + (cols[0].transform.position - transform.position).z * Vector3.forward;
-            SetRotation(rot.normalized);
-        }
+            Attack(null);
         }
         else if (cols.Length == 0)
         {
@@ -108,6 +109,7 @@ public class Minion : Hitable
                 SetRotation(rot.normalized);
             }
         }
+
     }
 
     public void SetPosition(Vector3 position)
@@ -124,7 +126,7 @@ public class Minion : Hitable
     }
     public override void Attack(Hitable victim)
     {
-        attackData.Attack(transform, hitPoint, enemyLayer, friendLayer);
+        combatData.Attack(transform, hitPoint, enemyLayer, friendLayer);
     }
     public Vector2 FindNearestPointOnLine(Vector2 origin, Vector2 direction, Vector2 point)
     {
@@ -133,5 +135,38 @@ public class Minion : Hitable
 
         float dotP = Vector2.Dot(lhs, direction);
         return origin + direction * dotP;
+    }
+    protected override void Die()
+    {
+        /*if (owner == null)
+        {
+            var rnd = UnityEngine.Random.Range(0f, 100f);
+            if (rnd > 80f)
+            {
+                owner = FindObjectOfType<Player>();
+                var army = FindObjectOfType<Army>();
+                army.AddMinion(this);
+                enemyLayer = gameObject.layer;
+                
+                SetLayerToChildrens(transform, CombatLayer.GetMinionLayer());
+
+                transform.parent = GameObject.Find("Army").transform;
+                friendLayer = 1 << CombatLayer.GetPlayerLayer() | 1 << CombatLayer.GetMinionLayer();
+                enemyLayer = 1 << CombatLayer.GetEnnemyLayer();
+                if (fighting) fighting = false;
+                combatData.Health = combatData.MAX_HEALTH;
+            }
+        }
+        else*/
+            base.Die();
+
+    }
+    void SetLayerToChildrens(Transform transform, LayerMask layer)
+    {
+        transform.gameObject.layer = layer;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            SetLayerToChildrens(transform.GetChild(i), layer);
+        }
     }
 }

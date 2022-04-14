@@ -18,6 +18,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Rigidbody body;
     [SerializeField] AnimationCurve accelerationCurve;
 
+    internal void SetSpeed(float speed)
+    {
+        maxSpeed = 3f * speed;
+        this.speed = maxSpeed * 3.333f;
+    }
+
+    
+
     private void Awake()
     {
         body = GetComponent<Rigidbody>();

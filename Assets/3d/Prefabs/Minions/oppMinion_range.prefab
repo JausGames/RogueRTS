@@ -5029,10 +5029,10 @@ MonoBehaviour:
   dieEvent:
     m_PersistentCalls:
       m_Calls: []
+  combatData: {fileID: 11400000, guid: 5b46f262651d9a3409e1a6c8fb23df21, type: 2}
   fighting: 0
   moving: 0
   type: 0
-  attackData: {fileID: 11400000, guid: 20cef7c257a3e234fb71a97a5729bf6c, type: 2}
   hitPoint: {fileID: 5643368841885884831}
   enemyLayer:
     serializedVersion: 2

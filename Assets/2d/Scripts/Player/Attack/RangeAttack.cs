@@ -8,7 +8,7 @@ namespace Gameplay.Player2d
 {
     [CreateAssetMenu(fileName = "RangeAtack", menuName = "Combat2d Objects/Range Attack/Basic Projectile", order = 1)]
 
-    public class RangeAttack : AttackData
+    public class RangeAttack : CombatData
     {
         [SerializeField] GameObject projectile;
         [SerializeField] float projectileSpeed;

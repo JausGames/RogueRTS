@@ -9,20 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5844b4fbd22f3c34c9fed2cb88418a85, type: 3}
-  m_Name: PlayerProjectile
+  m_Script: {fileID: 11500000, guid: 41f62569fd6ef5c4fb104f8068df7786, type: 3}
+  m_Name: TankCombat
   m_EditorClassIdentifier: 
-  damage: 10
-  speed: 5
-  physicArmor: 1
-  hitRadius: 0.2
-  hitRange: 4
-  coolDown: 0.5
+  damage: 1
+  speed: 2
+  physicArmor: 2
+  hitRadius: 0.15
+  hitRange: 0.3
+  coolDown: 0.6
   nextHit: 0
   maxHealth: 25
   health: 0
   attackParticles: {fileID: 1144125543912469989, guid: 6e57b7a3e14b74643a866b69c10427e4,
     type: 3}
-  projectile: {fileID: 7492541652951800509, guid: b4acee3119c13654d8867ea0b0e14fba,
-    type: 3}
-  projectileSpeed: 6

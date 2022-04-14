@@ -11,14 +11,16 @@ public class Army : MonoBehaviour
     [SerializeField] private float upwardOffset = 0.35f;
     //[SerializeField]  private int nbByLine;
     [SerializeField]  private AnimationCurve nbByLineCurve;
+    [SerializeField]  private ArmyUI ui;
 
     private void Start()
     {
         owner = GetComponent<Player>();
         foreach(Minion min in minions)
         {
-            min.dieEvent.AddListener(delegate { minions.Remove(min); });
+            min.dieEvent.AddListener(delegate { minions.Remove(min); ui.SetUI(minions); });
         }
+        ui.SetUI(minions);
     }
 
     public void SetMinionsPosition(Vector3 position, Vector3 direction)
@@ -129,7 +131,8 @@ public class Army : MonoBehaviour
     internal void AddMinion(Minion minion)
     {
         minions.Add(minion);
-        minion.dieEvent.AddListener(delegate { minions.Remove(minion); });
+        ui.SetUI(minions);
+        minion.dieEvent.AddListener(delegate { minions.Remove(minion); ui.SetUI(minions); });
     }
 
     int NbMinionByLine(int nb)

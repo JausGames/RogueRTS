@@ -11,6 +11,10 @@ public class MinionSpawner : ScriptableObject
     public Transform RoomTransform { get => roomTransform; set => roomTransform = value; }
     internal List<SpawnData> SpawnDataList { get => spawnDataList; set => spawnDataList = value; }
 
+    static void SpawnMinion(GameObject prefab, Vector3 position, Quaternion rotation, Transform parent)
+    {
+        Instantiate(prefab, position, rotation, parent);
+    }
     public void SpawnMinion()
     {
         foreach (SpawnData data in SpawnDataList)

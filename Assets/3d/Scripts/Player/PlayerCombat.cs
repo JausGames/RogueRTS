@@ -5,18 +5,17 @@ using UnityEngine;
 public class PlayerCombat : MonoBehaviour
 {
     [Header("Component")]
-    [SerializeField] AttackData attackData;
+    [SerializeField] CombatData combatData;
     [SerializeField] public Transform hitPoint;
     [SerializeField] public LayerMask ennemyLayer;
     [SerializeField] public LayerMask friendLayer;
+
+    public CombatData CombatData { get => combatData; set => combatData = value; }
+
     //private float nextHit;
 
-    private void Awake()
-    {
-        if(attackData != null) attackData = Instantiate(attackData);
-    }
     public void Attack()
     {
-        attackData.Attack(transform, hitPoint, ennemyLayer, friendLayer);
+        combatData.Attack(transform, hitPoint, ennemyLayer, friendLayer);
     }
 }

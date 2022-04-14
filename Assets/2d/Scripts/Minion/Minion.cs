@@ -15,7 +15,6 @@ namespace Gameplay.Player2d
         [Header("Status")]
         [SerializeField] private bool fighting = false;
         [Header("Component")]
-        [SerializeField] AttackData attackData;
         [SerializeField] public Transform hitPoint;
         [SerializeField] public LayerMask enemyLayer;
         [SerializeField] public LayerMask friendLayer;
@@ -29,7 +28,7 @@ namespace Gameplay.Player2d
 
         private void Awake()
         {
-            if (attackData != null) attackData = Instantiate(attackData);
+            if (combatData != null) combatData = Instantiate(combatData);
 
             agent = GetComponent<NavMeshAgent>();
             agent.updateRotation = false;
@@ -40,21 +39,21 @@ namespace Gameplay.Player2d
 
         private void Update()
         {
-            var cols = Physics2D.OverlapCircleAll(transform.position, attackData.HitRange, enemyLayer);
+            var cols = Physics2D.OverlapCircleAll(transform.position, combatData.HitRange, enemyLayer);
 
             if (cols.Length > 0)
             {
                 Fighting = true;
                 Attack(null);
 
-                var offset = owner ? (owner.transform.position - cols[0].transform.position).normalized * attackData.HitRange : Vector3.zero;
+                var offset = owner ? (owner.transform.position - cols[0].transform.position).normalized * combatData.HitRange : Vector3.zero;
                 SetPosition(cols[0].transform.position + offset);
-                if (attackData.GetType() == typeof(RangeAttack))
+                if (combatData.GetType() == typeof(RangeAttack))
                 {
-                    var rangedAttack = (RangeAttack)attackData;
+                    var rangedAttack = (RangeAttack)combatData;
                     var opponentVelocity = cols[0].GetComponent<Minion>() ? cols[0].GetComponent<NavMeshAgent>().velocity : (Vector3)cols[0].GetComponent<Rigidbody2D>().velocity;
                     var opponentPosition = cols[0].transform.position;
-                    var opponentLastPosition = (cols[0].transform.position + opponentVelocity.normalized * opponentVelocity.magnitude * attackData.HitRange * (1f / rangedAttack.ProjectileSpeed));
+                    var opponentLastPosition = (cols[0].transform.position + opponentVelocity.normalized * opponentVelocity.magnitude * combatData.HitRange * (1f / rangedAttack.ProjectileSpeed));
                     //var opponentFuturePosition = FindNearestPointOnLine(cols[0].transform.position, opponentVelocity, hitPoint.position);
                     var opponentFuturePosition = opponentPosition;
 
@@ -111,7 +110,7 @@ namespace Gameplay.Player2d
         }
         public override void Attack(Hitable victim)
         {
-            attackData.Attack(transform, hitPoint, enemyLayer, friendLayer);
+            combatData.Attack(transform, hitPoint, enemyLayer, friendLayer);
         }
         public Vector2 FindNearestPointOnLine(Vector2 origin, Vector2 direction, Vector2 point)
         {

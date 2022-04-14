@@ -16,6 +16,12 @@ namespace Gameplay.Player2d
         //here
         [SerializeField] LayerMask doorLayer;
 
+
+        private void Awake()
+        {
+            if (combatData != null) combatData = Instantiate(combatData, transform);
+        }
+
         // Start is called before the first frame update
         void Start()
         {
@@ -38,6 +44,10 @@ namespace Gameplay.Player2d
         public override void Attack(Hitable victim)
         {
             combat.Attack();
+        }
+        public override void GetHit(float damage)
+        {
+            base.GetHit(damage);
         }
 
         void AddMinionToArmy(Minion minion)

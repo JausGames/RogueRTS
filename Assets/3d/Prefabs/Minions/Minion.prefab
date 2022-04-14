@@ -4956,7 +4956,7 @@ GameObject:
   - component: {fileID: 480909399676557858}
   - component: {fileID: 4229908006521760277}
   m_Layer: 7
-  m_Name: oppMinion_cac
+  m_Name: Minion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4988,7 +4988,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.15
-  m_Speed: 2
+  m_Speed: 4
   m_Acceleration: 4
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -5029,10 +5029,10 @@ MonoBehaviour:
   dieEvent:
     m_PersistentCalls:
       m_Calls: []
+  combatData: {fileID: 11400000, guid: 6a8be639237a5f743873d862d62a4ae2, type: 2}
   fighting: 0
   moving: 0
   type: 0
-  attackData: {fileID: 11400000, guid: d7b491e613518544fa54284d4ee6008c, type: 2}
   hitPoint: {fileID: 5643368841885884831}
   enemyLayer:
     serializedVersion: 2

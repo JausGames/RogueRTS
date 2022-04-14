@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "RangeAtack", menuName = "Combat Objects/Range Attack/Basic Projectile", order = 1)]
-public class RangeAttack : AttackData
+public class RangeAttack : CombatData
 {
     [SerializeField] GameObject projectile;
     [SerializeField] float projectileSpeed;

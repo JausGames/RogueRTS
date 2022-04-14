@@ -51,7 +51,7 @@ public class Projectile : MonoBehaviour
                 var checkedDistance = (touchedEnnemy[i].transform.position - transform.position).sqrMagnitude;
                 if (checkedDistance < distance) closestEnnemyId = i;
             }
-            touchedEnnemy[closestEnnemyId].GetHit(damage);
+            if(touchedEnnemy[closestEnnemyId]) touchedEnnemy[closestEnnemyId].GetHit(damage);
             Destroy(gameObject);
         }
 

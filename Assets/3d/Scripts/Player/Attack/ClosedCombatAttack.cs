@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ClosedCombat", menuName = "Combat Objects/Closed Combat/Basic Hit", order = 1)]
-public class ClosedCombatAttack : AttackData
+public class ClosedCombatAttack : CombatData
 {
     override public void Attack(Transform owner, Transform hitPoint, LayerMask enemyLayer, LayerMask friendLayer)
     {

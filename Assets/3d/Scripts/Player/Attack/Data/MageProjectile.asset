@@ -7,15 +7,22 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41f62569fd6ef5c4fb104f8068df7786, type: 3}
-  m_Name: BascClosedCombat
+  m_Script: {fileID: 11500000, guid: 5844b4fbd22f3c34c9fed2cb88418a85, type: 3}
+  m_Name: MageProjectile
   m_EditorClassIdentifier: 
-  damage: 0.2
-  hitRadius: 0.15
-  hitRange: 0.35
-  coolDown: 0.5
+  damage: 2
+  speed: 2.75
+  physicArmor: 0
+  hitRadius: 0.2
+  hitRange: 5
+  coolDown: 2
   nextHit: 0
+  maxHealth: 8
+  health: 0
   attackParticles: {fileID: 1144125543912469989, guid: 6e57b7a3e14b74643a866b69c10427e4,
     type: 3}
+  projectile: {fileID: 7492541652951800509, guid: 71680e14dca400046aebf684d2322d51,
+    type: 3}
+  projectileSpeed: 4

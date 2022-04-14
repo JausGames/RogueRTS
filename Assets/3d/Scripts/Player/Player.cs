@@ -14,14 +14,25 @@ public class Player : Hitable
     //here
     [SerializeField] LayerMask doorLayer;
 
+    [SerializeField] HealthBar healthUI;
+
     // Start is called before the first frame update
+    private void Awake()
+    {
+        //if (combatData != null) combatData = Instantiate(combatData, transform);
+    }
     void Start()
     {
         combat = GetComponent<PlayerCombat>();
+        combat.CombatData = combatData;
         motor = GetComponent<PlayerController>();
         army = GetComponent<Army>();
 
+        motor.SetSpeed(combatData.Speed);
         motor.updateArmyEvent.AddListener(delegate { army.SetMinionsPosition(transform.position, transform.forward); });
+
+        healthUI.SetMaxHealth(combatData.MAX_HEALTH);
+        healthUI.SetHealth(combatData.Health);
     }
     internal void TryAction()
     {
@@ -47,6 +58,11 @@ public class Player : Hitable
         minion.Owner = this;
         army.AddMinion(minion);
         army.SetMinionsPosition(transform.position, transform.forward);
+    }
+    public override void GetHit(float damage)
+    {
+        base.GetHit(damage);
+        healthUI.SetHealth(combatData.Health);
     }
     protected override void Die()
     {
