@@ -33,11 +33,7 @@ abstract public class CombatData : ScriptableObject
 
     AttackData SetAttackData()
     {
-        var data = new AttackData();
-        foreach(AttackModifier mod in modifiers)
-        {
-            mod.ApplyModifier(data);
-        }
+        var data = new AttackData(damage, modifiers);
         return data;
     }
 
@@ -47,21 +43,30 @@ abstract public class CombatData : ScriptableObject
         if (nextHit > Time.time) return;
         nextHit = Time.time + coolDown;
     }
+    virtual public void HitTarget(Hitable victim)
+    {
+        victim.GetHit(SetAttackData());
+    }
 
 }
 
 
-class AttackData
+public class AttackData
 {
-    float damage;
-    List<Status> statusList = new List<Status>();
+    public float damage;
+    public List<Status> statusList = new List<Status>();
+
+    public AttackData(float damage, List<AttackModifier> modifiers)
+    {
+        this.damage = damage;
+        foreach (AttackModifier mod in modifiers)
+        {
+            mod.ApplyModifier(this);
+        }
+    }
 
     internal void AddStatus(Status status)
     {
         statusList.Add(status);
     }
-}
-class Status
-{
-
 }

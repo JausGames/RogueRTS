@@ -71,6 +71,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Map"",
+                    ""type"": ""Button"",
+                    ""id"": ""e25d18c1-f975-44b2-9867-97583493d1e6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -205,6 +214,28 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""Action"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7d1e2032-e473-4b15-bd03-c7edf9078f8b"",
+                    ""path"": ""<Gamepad>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Map"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""679a23f5-ed4f-4cc0-96c1-e2b1ece02130"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Map"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -246,6 +277,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_PlayerControl_MouseLook = m_PlayerControl.FindAction("MouseLook", throwIfNotFound: true);
         m_PlayerControl_Attack = m_PlayerControl.FindAction("Attack", throwIfNotFound: true);
         m_PlayerControl_Action = m_PlayerControl.FindAction("Action", throwIfNotFound: true);
+        m_PlayerControl_Map = m_PlayerControl.FindAction("Map", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -310,6 +342,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerControl_MouseLook;
     private readonly InputAction m_PlayerControl_Attack;
     private readonly InputAction m_PlayerControl_Action;
+    private readonly InputAction m_PlayerControl_Map;
     public struct PlayerControlActions
     {
         private @Controls m_Wrapper;
@@ -319,6 +352,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @MouseLook => m_Wrapper.m_PlayerControl_MouseLook;
         public InputAction @Attack => m_Wrapper.m_PlayerControl_Attack;
         public InputAction @Action => m_Wrapper.m_PlayerControl_Action;
+        public InputAction @Map => m_Wrapper.m_PlayerControl_Map;
         public InputActionMap Get() { return m_Wrapper.m_PlayerControl; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -343,6 +377,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @Action.started -= m_Wrapper.m_PlayerControlActionsCallbackInterface.OnAction;
                 @Action.performed -= m_Wrapper.m_PlayerControlActionsCallbackInterface.OnAction;
                 @Action.canceled -= m_Wrapper.m_PlayerControlActionsCallbackInterface.OnAction;
+                @Map.started -= m_Wrapper.m_PlayerControlActionsCallbackInterface.OnMap;
+                @Map.performed -= m_Wrapper.m_PlayerControlActionsCallbackInterface.OnMap;
+                @Map.canceled -= m_Wrapper.m_PlayerControlActionsCallbackInterface.OnMap;
             }
             m_Wrapper.m_PlayerControlActionsCallbackInterface = instance;
             if (instance != null)
@@ -362,6 +399,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @Action.started += instance.OnAction;
                 @Action.performed += instance.OnAction;
                 @Action.canceled += instance.OnAction;
+                @Map.started += instance.OnMap;
+                @Map.performed += instance.OnMap;
+                @Map.canceled += instance.OnMap;
             }
         }
     }
@@ -391,5 +431,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnMouseLook(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnAction(InputAction.CallbackContext context);
+        void OnMap(InputAction.CallbackContext context);
     }
 }

@@ -11,7 +11,7 @@ public class CamFollow : MonoBehaviour
     //[SerializeField] float rotationClampSpeed;
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if(follow) transform.position = Vector3.Lerp(transform.position, follow.position + offsetPosition, positionClampSpeed);
         //.rotation = Quaternion.Lerp(transform.rotation, follow.rotation, rotationClampSpeed);

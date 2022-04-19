@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5844b4fbd22f3c34c9fed2cb88418a85, type: 3}
+  m_Name: PlayerProjectile
+  m_EditorClassIdentifier: 
+  damage: 5
+  speed: 5
+  physicArmor: 1
+  hitRadius: 0.2
+  hitRange: 4
+  coolDown: 0.5
+  nextHit: 0
+  maxHealth: 25
+  health: 25
+  attackParticles: {fileID: 1144125543912469989, guid: 6e57b7a3e14b74643a866b69c10427e4,
+    type: 3}
+  modifiers:
+  - {fileID: 11400000, guid: 09a25167234a6b64584eb7fb166052c9, type: 2}
+  projectile: {fileID: 7492541652951800509, guid: b4acee3119c13654d8867ea0b0e14fba,
+    type: 3}
+  projectileSpeed: 6
