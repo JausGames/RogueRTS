@@ -15,7 +15,7 @@ public class MapSettings
                 return colors[0];
             case Type.End:
                 return colors[1];
-            case Type.TroupsBonus:
+            case Type.Special:
                 return colors[2];
             case Type.Default:
                 return colors[3];

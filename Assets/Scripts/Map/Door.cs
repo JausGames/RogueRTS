@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,6 +34,14 @@ public class Door : MonoBehaviour
         connectedRooms.Add(room2);
         room1.AddDoor(this);
         room2.AddDoor(this);
+    }
+
+    internal void ChangeConnectedRoom(SpecialRoom specialRoom)
+    {
+        for(int i = 0; i < connectedRooms.Count; i++)
+        {
+            if (connectedRooms[i] == null) connectedRooms[i] = specialRoom;
+        }
     }
 }
 

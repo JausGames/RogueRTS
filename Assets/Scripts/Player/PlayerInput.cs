@@ -12,6 +12,8 @@ public class PlayerInput : MonoBehaviour
     public bool is3D = true;
 
     private Controls controls;
+    private bool attack;
+
     private Controls Controls
     {
         get
@@ -19,6 +21,12 @@ public class PlayerInput : MonoBehaviour
             if (controls != null) { return controls; }
             return controls = new Controls();
         }
+    }
+
+
+    private void FixedUpdate()
+    {
+        if (attack) KeepAttacking();    
     }
     public void OnMove(CallbackContext context)
     {
@@ -35,9 +43,12 @@ public class PlayerInput : MonoBehaviour
     public void OnMouseLook(CallbackContext context)
     {
         if (motor == null) return;
-        var look = context.ReadValue<Vector2>();
+        var look = (Vector3) context.ReadValue<Vector2>();
+        look.z = 20f;
 
         var mousePlayerDelta = Camera.main.ScreenToWorldPoint(look) - transform.position;
+        //var mousePlayerDelta = Camera.main.ScreenToWorldPoint(look);
+        //var mousePlayerDelta = look;
         Debug.Log("OnMouseLook, mousePlayerDelta = " + mousePlayerDelta);
         if(is3D) mousePlayerDelta = mousePlayerDelta.x * Vector2.right + mousePlayerDelta.z * Vector2.up;
         motor.SetLook((Vector2)mousePlayerDelta);
@@ -45,8 +56,12 @@ public class PlayerInput : MonoBehaviour
     public void OnAttack(CallbackContext context)
     {
         if (player == null) return;
-        var isPerformed = context.performed;
-        if(isPerformed) player.Attack(null);
+        attack = context.performed;
+        if(attack) player.Attack(null);
+    }
+    public void KeepAttacking()
+    {
+        player.Attack(null);
     }
     public void OnAction(CallbackContext context)
     {

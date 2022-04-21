@@ -206,11 +206,11 @@ public class StageGenerator : MonoBehaviour
     void Awake()
     {
 
-/*#if UNITY_EDITOR
+#if UNITY_EDITOR
         Debug.unityLogger.logEnabled = true;
 #else
     Debug.unityLogger.logEnabled = false;
-#endif*/
+#endif
 
         StartCoroutine(CreateStage());
     }

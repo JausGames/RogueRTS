@@ -181,8 +181,11 @@ public class Stage : MonoBehaviour
         for (int i = 0; i < RoomList.Count; i++)
         {
             if (roomList[i].DoorsDirections.Count == 1
-                && roomList[i].RoomType == Type.Default) 
-                roomList[i].RoomType = Type.TroupsBonus;
+                && roomList[i].RoomType == Type.Default)
+            {
+                roomList[i] = Room.RoomToSpecialRoom(roomList[i]);
+
+            }
             roomList[i].GenerateRoom();
         }
 

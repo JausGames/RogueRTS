@@ -16,25 +16,26 @@ public enum Type
 {
     Start,
     End,
-    TroupsBonus,
+    Special,
     Default
 }
 
 
 public class Room : MonoBehaviour
 {
-    [SerializeField] Type roomType = Type.Default;
+    [SerializeField] protected Type roomType = Type.Default;
     [SerializeField] List<Direction> doorsDirections = new List<Direction>();
 
     [SerializeField] bool _navMeshBuildOnce = false;
     [SerializeField] List<Vector3> doorsPostition = new List<Vector3>();
     [SerializeField] List<Door> doorObject = new List<Door>();
 
-    [SerializeField] List<GameObject> roomFloorPrefabs = new List<GameObject>();
-    [SerializeField] List<GameObject> doorPrefabs = new List<GameObject>();
-    [SerializeField] List<GameObject> wallPrefabs = new List<GameObject>();
+    [SerializeField] protected List<GameObject> roomFloorPrefabs = new List<GameObject>();
+    [SerializeField] protected List<GameObject> doorPrefabs = new List<GameObject>();
+    [SerializeField] protected List<GameObject> wallPrefabs = new List<GameObject>();
 
-    [SerializeField] List<MinionSpawner> minionSpawnerList = new List<MinionSpawner>();
+    [SerializeField] protected List<MinionSpawner> minionSpawnerList = new List<MinionSpawner>();
+    [SerializeField] protected MinionSpawner minionSpawner;
 
     internal void AddDoor(Door door)
     {
@@ -49,7 +50,6 @@ public class Room : MonoBehaviour
         return null;
     }
 
-    [SerializeField] MinionSpawner minionSpawner;
 
     public List<Direction> DoorsDirections { get => doorsDirections; set => doorsDirections = value; }
     public List<Vector3> DoorsPostition { get => doorsPostition; set => doorsPostition = value; }
@@ -71,7 +71,7 @@ public class Room : MonoBehaviour
         foreach (Minion min in sleepingOpponent)
             min.Moving = canMove;
     }
-    public void GenerateRoom()
+    virtual public void GenerateRoom()
     {
 
         if (!IsContainingDoor(Direction.North))
@@ -94,7 +94,7 @@ public class Room : MonoBehaviour
             case Type.End:
                 Instantiate(roomFloorPrefabs[2], transform.position, doorPrefabs[0].transform.rotation, transform);
                 break;
-            case Type.TroupsBonus:
+            case Type.Special:
                 Instantiate(roomFloorPrefabs[3], transform.position, doorPrefabs[0].transform.rotation, transform);
                 break;
             case Type.Default:
@@ -111,7 +111,7 @@ public class Room : MonoBehaviour
         }
     }
 
-    bool IsContainingDoor(Direction dir)
+    protected bool IsContainingDoor(Direction dir)
     {
         if (doorsDirections.Count == 0) return false;
         foreach (Direction d in doorsDirections)
@@ -119,6 +119,25 @@ public class Room : MonoBehaviour
             if (d == dir) return true;
         }
         return false;
+    }
+
+    static public SpecialRoom RoomToSpecialRoom(Room room)
+    {
+        var specialRoom = room.gameObject.AddComponent<SpecialRoom>();
+        specialRoom.roomType = Type.Special;
+        specialRoom.doorsDirections.AddRange(room.doorsDirections);
+        specialRoom.doorsPostition.AddRange(room.doorsPostition);
+        specialRoom.doorObject.AddRange(room.doorObject);
+        specialRoom.doorObject[0].ChangeConnectedRoom(specialRoom);
+        specialRoom.roomFloorPrefabs.Add(room.roomFloorPrefabs[3]);
+        specialRoom.roomFloorPrefabs.Add(room.roomFloorPrefabs[3]);
+        specialRoom.roomFloorPrefabs.Add(room.roomFloorPrefabs[3]);
+        specialRoom.doorPrefabs.AddRange(room.doorPrefabs);
+        specialRoom.wallPrefabs.AddRange(room.wallPrefabs);
+        specialRoom.minionSpawnerList.AddRange(room.minionSpawnerList);
+
+        Destroy(room);
+        return specialRoom;
     }
 
 }
