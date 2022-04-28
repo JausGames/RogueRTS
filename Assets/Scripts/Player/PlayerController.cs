@@ -111,5 +111,7 @@ public class PlayerController : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawLine(transform.position, transform.position + (Vector3)move);
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, transform.position + (Vector3)look);
     }
 }

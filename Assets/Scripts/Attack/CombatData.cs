@@ -8,7 +8,7 @@ abstract public class CombatData : ScriptableObject
 {
     [Header("Stats")]
     [SerializeField] protected float damage;
-    [SerializeField] protected float speed;
+    [SerializeField] protected float speed; //projectile
     [SerializeField] protected float physicArmor;
     [SerializeField] protected float hitRadius;
     [SerializeField] protected float hitRange;
@@ -16,6 +16,10 @@ abstract public class CombatData : ScriptableObject
     [SerializeField] protected float nextHit = 0f;
     [SerializeField] protected float maxHealth = 10f;
     [SerializeField] protected float health;
+    [Header("Histo")]
+    [SerializeField] List<Bonus> bonusList = new List<Bonus>();
+    [SerializeField] List<String> bonusName = new List<String>();
+    [SerializeField] List<Sprite> bonusSprite = new List<Sprite>();
     [Header("Component")]
     [SerializeField] public ParticleSystem attackParticles;
     [SerializeField] List<AttackModifier> modifiers = new List<AttackModifier>();
@@ -25,6 +29,10 @@ abstract public class CombatData : ScriptableObject
     public float Health { get => health; set => health = value; }
     public float Speed { get => speed; set => speed = value; }
     public float PhysicArmor { get => physicArmor; set => physicArmor = value; }
+    public float Damage { get => damage; set => damage = value; }
+    public float Radius { get => hitRadius; set => hitRadius = value; }
+    public float Cooldown { get => coolDown; set => coolDown = value; }
+    public List<Bonus> BonusList { get => bonusList; set => bonusList = value; }
 
     private void Awake()
     {
@@ -46,6 +54,23 @@ abstract public class CombatData : ScriptableObject
     virtual public void HitTarget(Hitable victim)
     {
         victim.GetHit(SetAttackData());
+    }
+
+    virtual public void AddBonus(Bonus bonus)
+    {
+        this.damage += bonus.StatBonus.damage;
+        this.speed += bonus.StatBonus.speed;
+        this.physicArmor += bonus.StatBonus.physicArmor;
+        this.hitRadius += bonus.StatBonus.hitRadius;
+        this.hitRange += bonus.StatBonus.hitRange;
+        this.coolDown += bonus.StatBonus.coolDown;
+        this.health += bonus.StatBonus.health;
+
+        modifiers.AddRange(bonus.Modifiers);
+
+        bonusName.Add(bonus.name);
+        bonusSprite.Add(bonus.Sprite);
+        bonusList.Add(bonus);
     }
 
 }

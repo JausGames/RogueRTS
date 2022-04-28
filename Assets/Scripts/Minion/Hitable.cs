@@ -71,6 +71,10 @@ abstract public class Hitable : MonoBehaviour
 
     public virtual void StopMotion(bool isMoving) { }
          
+    virtual public void AddBonus(Bonus bonus)
+    {
+        combatData.AddBonus(bonus);
+    }
 
     void ApplyStatus()
     {

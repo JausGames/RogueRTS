@@ -14,9 +14,16 @@ public class Player : Hitable
     [SerializeField] LayerMask minionMask;
     //here
     [SerializeField] LayerMask doorLayer;
+    [SerializeField] LayerMask bonusLayer;
 
     [SerializeField] HealthBar healthUI;
     [SerializeField] ParticleSystem actionParticle;
+    [SerializeField] List<GameObject> hidableGo;
+
+    override public void AddBonus(Bonus bonus)
+    {
+        combat.AddBonus(bonus);
+    }
 
     // Start is called before the first frame update
     private void Awake()
@@ -42,12 +49,25 @@ public class Player : Hitable
     }
     internal void TryAction()
     {
-        Debug.Log("Try action");
+        Debug.Log("Try action -- Door");
         var cols = Physics.OverlapCapsule(transform.position, transform.position + 2f * transform.transform.forward, 0.5f ,doorLayer);
         if (cols.Length > 0)
         {
             actionParticle.Play();
             Destroy(cols[0].gameObject);
+        }
+        Debug.Log("Try action -- Bonus");
+        cols = Physics.OverlapCapsule(transform.position, transform.position + 2f * transform.transform.forward, 0.5f, bonusLayer);
+        if (cols.Length > 0)
+        {
+            var bonus = cols[0].GetComponent<BonusFactory>();
+            if(!bonus.Open)
+                bonus.OnInteract(this);
+            else
+            {
+                bonus.OnInteract(this);
+                Destroy(cols[0].gameObject);
+            }
         }
     }
 
@@ -66,6 +86,10 @@ public class Player : Hitable
     internal void ShowMap(bool isPressed)
     {
         mapUi.SetWholeScreenMap(isPressed);
+        foreach(GameObject go in hidableGo)
+        {
+            go.SetActive(isPressed);
+        }
     }
     public override void GetHit(float damage)
     {

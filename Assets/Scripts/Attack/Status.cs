@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-[CreateAssetMenu(fileName = "Status", menuName = "Bonus/Status", order = 2)]
+[CreateAssetMenu(fileName = "Status", menuName = "Bonus/Status", order = 3)]
 public class Status : ScriptableObject
 {
     public UnityEvent onStatusEnd = new UnityEvent();

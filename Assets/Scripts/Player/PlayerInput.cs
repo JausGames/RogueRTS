@@ -47,6 +47,7 @@ public class PlayerInput : MonoBehaviour
         look.z = 20f;
 
         var mousePlayerDelta = Camera.main.ScreenToWorldPoint(look) - transform.position;
+        Debug.DrawLine(transform.position, Camera.main.ScreenToWorldPoint(look));
         //var mousePlayerDelta = Camera.main.ScreenToWorldPoint(look);
         //var mousePlayerDelta = look;
         Debug.Log("OnMouseLook, mousePlayerDelta = " + mousePlayerDelta);
