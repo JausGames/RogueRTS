@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 192140463477123243}
   - component: {fileID: 206632495666423209}
   - component: {fileID: 2393349511133006606}
-  m_Layer: 5
+  m_Layer: 12
   m_Name: Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +89,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4703622144104552162}
   - component: {fileID: 4781635645940697910}
-  m_Layer: 11
+  m_Layer: 12
   m_Name: Renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -173,7 +173,7 @@ GameObject:
   - component: {fileID: 3776668307207446471}
   - component: {fileID: 1387132680322820466}
   - component: {fileID: 8690572164033612286}
-  m_Layer: 11
+  m_Layer: 12
   m_Name: BonusGifter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -240,7 +240,7 @@ GameObject:
   - component: {fileID: 6249272415992508197}
   - component: {fileID: 5875999917739307771}
   - component: {fileID: 7832327852100601435}
-  m_Layer: 5
+  m_Layer: 12
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -337,7 +337,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5514721848864695558}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: room1x1_bonus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -441,6 +441,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: floor_tiled
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 76eb15b2ef1de5b4c8da521e5aa8ffcc,
+        type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76eb15b2ef1de5b4c8da521e5aa8ffcc, type: 3}

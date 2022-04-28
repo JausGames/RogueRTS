@@ -24,7 +24,7 @@ abstract public class CombatData : ScriptableObject
     [SerializeField] public ParticleSystem attackParticles;
     [SerializeField] List<AttackModifier> modifiers = new List<AttackModifier>();
 
-    public float HitRange { get => hitRange;}
+    public float HitRange { get => hitRange; set => hitRange = value; }
     public float MAX_HEALTH { get => maxHealth; set => maxHealth = value; }
     public float Health { get => health; set => health = value; }
     public float Speed { get => speed; set => speed = value; }

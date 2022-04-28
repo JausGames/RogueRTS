@@ -11,9 +11,18 @@ public class Projectile : MonoBehaviour
     [SerializeField] LayerMask enemyLayer;
     [SerializeField] LayerMask willDestroyLayer;
     [SerializeField] CombatData data;
+    [SerializeField] Transform visual;
+    [SerializeField] SphereCollider collider;
 
     public float Speed { get => speed; set => speed = value; }
-    public float Radius { get => radius; set => radius = value; }
+    public float Radius { get => radius; 
+        set
+        {
+            radius = value;
+            visual.localScale = radius * Vector3.right + radius * Vector3.up + radius * Vector3.forward;
+            collider.radius = radius;
+        }
+    }
     public float Range { get => range; set => range = value; }
     public LayerMask EnemyLayer { get => enemyLayer; set => enemyLayer = value; }
     public LayerMask WillDestroyLayer { get => willDestroyLayer; set => willDestroyLayer = value; }
@@ -58,7 +67,7 @@ public class Projectile : MonoBehaviour
 
         cols = Physics.OverlapSphere(transform.position, radius, WillDestroyLayer);
         if(cols.Length != 0)
-            Destroy(gameObject);
+            Destroy(gameObject, 0.5f);
 
 
     }
@@ -66,6 +75,6 @@ public class Projectile : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, radius);
+        Gizmos.DrawWireSphere(transform.position, radius * 0.5f);
     }
 }

@@ -8,6 +8,7 @@ public class RangeAttack : CombatData
 {
     [SerializeField] GameObject projectile;
     [SerializeField] float projectileSpeed;
+    [SerializeField] LayerMask floorLayer;
 
     public float ProjectileSpeed { get => projectileSpeed; set => projectileSpeed = value; }
     public GameObject Projectile { get => projectile; set => projectile = value; }
@@ -21,11 +22,12 @@ public class RangeAttack : CombatData
 
         var projectileGo = Instantiate(projectile, hitPoint.transform.position, owner.transform.rotation * projectile.transform.rotation, null);
         var projectileCmp = projectileGo.GetComponent<Projectile>();
+        projectileCmp.EnemyLayer = enemyLayer;
+
+        projectileCmp.WillDestroyLayer = ~friendLayer & (~(1 << projectileGo.layer) & ~(1 << floorLayer));
         projectileCmp.Data = this;
         projectileCmp.Range = hitRange;
         projectileCmp.Radius = hitRadius;
         projectileCmp.Speed = projectileSpeed;
-        projectileCmp.EnemyLayer = enemyLayer;
-        projectileCmp.WillDestroyLayer = ~friendLayer & ~(1 << projectileGo.layer);
     }
 }

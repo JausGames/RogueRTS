@@ -18,7 +18,7 @@ MonoBehaviour:
     damage: 0
     speed: 0.3
     physicArmor: 0.1
-    hitRadius: 0
+    hitRadius: 0.1
     hitRange: 0.1
     coolDown: -0.15
     health: 0

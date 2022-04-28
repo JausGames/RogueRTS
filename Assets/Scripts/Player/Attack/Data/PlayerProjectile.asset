@@ -21,6 +21,9 @@ MonoBehaviour:
   nextHit: 0
   maxHealth: 25
   health: 25
+  bonusList: []
+  bonusName: []
+  bonusSprite: []
   attackParticles: {fileID: 1144125543912469989, guid: 6e57b7a3e14b74643a866b69c10427e4,
     type: 3}
   modifiers:
@@ -28,3 +31,6 @@ MonoBehaviour:
   projectile: {fileID: 7492541652951800509, guid: b4acee3119c13654d8867ea0b0e14fba,
     type: 3}
   projectileSpeed: 6
+  floorLayer:
+    serializedVersion: 2
+    m_Bits: 4096
