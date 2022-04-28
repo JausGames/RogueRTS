@@ -26,7 +26,11 @@ public class Room : MonoBehaviour
     [SerializeField] protected Type roomType = Type.Default;
     [SerializeField] List<Direction> doorsDirections = new List<Direction>();
 
-    [SerializeField] bool _navMeshBuildOnce = false;
+    [SerializeField] List<GameObject> ui = new List<GameObject>();
+    [SerializeField] GameObject hidindSprite;
+
+    [SerializeField] bool open = false;
+    [SerializeField] int[,] position;
     [SerializeField] List<Vector3> doorsPostition = new List<Vector3>();
     [SerializeField] List<Door> doorObject = new List<Door>();
 
@@ -43,7 +47,7 @@ public class Room : MonoBehaviour
     }
     public Door GetDoorByDirection(Direction direction)
     {
-        foreach(Door door in doorObject)
+        foreach (Door door in doorObject)
         {
             if (door.Direction == direction) return door;
         }
@@ -54,6 +58,17 @@ public class Room : MonoBehaviour
     public List<Direction> DoorsDirections { get => doorsDirections; set => doorsDirections = value; }
     public List<Vector3> DoorsPostition { get => doorsPostition; set => doorsPostition = value; }
     public Type RoomType { get => roomType; set => roomType = value; }
+    public int[,] Position { get => position; set => position = value; }
+    public bool Open { get => open; 
+        set {
+            open = value;
+            SetEnnemyCanMove(value);
+            foreach (GameObject gm in ui) gm.SetActive(value);
+            if (value) Destroy(hidindSprite);
+            }
+        }
+
+    public List<GameObject> Ui { get => ui; set => ui = value; }
 
     private void Awake()
     {
@@ -90,6 +105,7 @@ public class Room : MonoBehaviour
         {
             case Type.Start:
                 Instantiate(roomFloorPrefabs[1], transform.position, doorPrefabs[0].transform.rotation, transform);
+                open = true;
                 break;
             case Type.End:
                 Instantiate(roomFloorPrefabs[2], transform.position, doorPrefabs[0].transform.rotation, transform);
@@ -119,25 +135,6 @@ public class Room : MonoBehaviour
             if (d == dir) return true;
         }
         return false;
-    }
-
-    static public SpecialRoom RoomToSpecialRoom(Room room)
-    {
-        var specialRoom = room.gameObject.AddComponent<SpecialRoom>();
-        specialRoom.roomType = Type.Special;
-        specialRoom.doorsDirections.AddRange(room.doorsDirections);
-        specialRoom.doorsPostition.AddRange(room.doorsPostition);
-        specialRoom.doorObject.AddRange(room.doorObject);
-        specialRoom.doorObject[0].ChangeConnectedRoom(specialRoom);
-        specialRoom.roomFloorPrefabs.Add(room.roomFloorPrefabs[3]);
-        specialRoom.roomFloorPrefabs.Add(room.roomFloorPrefabs[3]);
-        specialRoom.roomFloorPrefabs.Add(room.roomFloorPrefabs[3]);
-        specialRoom.doorPrefabs.AddRange(room.doorPrefabs);
-        specialRoom.wallPrefabs.AddRange(room.wallPrefabs);
-        specialRoom.minionSpawnerList.AddRange(room.minionSpawnerList);
-
-        Destroy(room);
-        return specialRoom;
     }
 
 }

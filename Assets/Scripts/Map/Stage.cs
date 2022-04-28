@@ -180,12 +180,6 @@ public class Stage : MonoBehaviour
     {
         for (int i = 0; i < RoomList.Count; i++)
         {
-            if (roomList[i].DoorsDirections.Count == 1
-                && roomList[i].RoomType == Type.Default)
-            {
-                roomList[i] = Room.RoomToSpecialRoom(roomList[i]);
-
-            }
             roomList[i].GenerateRoom();
         }
 
@@ -201,28 +195,52 @@ public class Stage : MonoBehaviour
 
     private void SetMapUi(StageGenerator.DoorNeedData doorNeed)
     {
-        for(int i = 0; i < RoomList.Count; i++)
-            mapUi.AddRoom(spotList[i], MapSettings.RoomTypeToColor(roomList[i].RoomType));
-
-        for(int i = 0; i < doorNeed.roomList.Count; i++)
+        for (int i = 0; i < RoomList.Count; i++)
         {
-            var uiDoorPos = (doorNeed.roomList[i].transform.position.x / GridSettings.gridSize.x) * Vector3.right + 
-                                (doorNeed.roomList[i].transform.position.z / GridSettings.gridSize.y) * Vector3.up;
+            if (roomList[i].RoomType == Type.Special)
+            {
+                var specialRoom = (SpecialRoom)roomList[i];
+                roomList[i].Ui.Add(mapUi.AddRoom(spotList[i], MapSettings.RoomTypeToColor(specialRoom.RoomType, specialRoom.SpecialType)));
+            }
+            else
+                roomList[i].Ui.Add(mapUi.AddRoom(spotList[i], MapSettings.RoomTypeToColor(roomList[i].RoomType)));
+        }
+        GenerateDoorUi(doorNeed);
+
+        mapUi.CompleteRoom(RoomList);
+    }
+
+    private void GenerateDoorUi(StageGenerator.DoorNeedData doorNeed)
+    {
+        for (int i = 0; i < doorNeed.roomList.Count; i++)
+        {
+            var doorRoom = GetRoomByPosition(doorNeed.roomList[i].placedRoomMatPos);
+            var doorConnectedRoom = GetRoomByPosition(doorNeed.connectedRoomList[i].placedRoomMatPos);
+
+            var uiDoorPos = (doorRoom.transform.position.x / GridSettings.gridSize.x) * Vector3.right +
+                                (doorRoom.transform.position.z / GridSettings.gridSize.y) * Vector3.up;
 
             switch (doorNeed.dirList[i])
             {
                 case Direction.North:
-
-                    doorNeed.connectedRoomList[i].GetDoorByDirection(doorNeed.dirList[i]).UiDoor = mapUi.AddDoor(uiDoorPos, Vector3.up, doorNeed.dirList[i]);
+                    var doorN = mapUi.AddDoor(uiDoorPos, Vector3.up, doorNeed.dirList[i]);
+                    doorConnectedRoom.GetDoorByDirection(doorNeed.dirList[i]).UiDoor = doorN;
+                    GetRoomByPosition(doorNeed.roomList[i].placedRoomMatPos).Ui.Add(doorN.transform.parent.gameObject);
                     break;
                 case Direction.Est:
-                    doorNeed.connectedRoomList[i].GetDoorByDirection(doorNeed.dirList[i]).UiDoor = mapUi.AddDoor(uiDoorPos, Vector3.right, doorNeed.dirList[i]);
+                    var doorE = mapUi.AddDoor(uiDoorPos, Vector3.right, doorNeed.dirList[i]);
+                    doorConnectedRoom.GetDoorByDirection(doorNeed.dirList[i]).UiDoor = doorE;
+                    GetRoomByPosition(doorNeed.roomList[i].placedRoomMatPos).Ui.Add(doorE.transform.parent.gameObject);
                     break;
                 case Direction.South:
-                    doorNeed.connectedRoomList[i].GetDoorByDirection(doorNeed.dirList[i]).UiDoor = mapUi.AddDoor(uiDoorPos, -Vector3.up, doorNeed.dirList[i]);
+                    var doorS = mapUi.AddDoor(uiDoorPos, -Vector3.up, doorNeed.dirList[i]);
+                    doorConnectedRoom.GetDoorByDirection(doorNeed.dirList[i]).UiDoor = doorS;
+                    GetRoomByPosition(doorNeed.roomList[i].placedRoomMatPos).Ui.Add(doorS.transform.parent.gameObject);
                     break;
                 case Direction.West:
-                    doorNeed.connectedRoomList[i].GetDoorByDirection(doorNeed.dirList[i]).UiDoor = mapUi.AddDoor(uiDoorPos, -Vector3.right, doorNeed.dirList[i]);
+                    var doorW = mapUi.AddDoor(uiDoorPos, -Vector3.right, doorNeed.dirList[i]);
+                    doorConnectedRoom.GetDoorByDirection(doorNeed.dirList[i]).UiDoor = doorW;
+                    GetRoomByPosition(doorNeed.roomList[i].placedRoomMatPos).Ui.Add(doorW.transform.parent.gameObject);
                     break;
                 case Direction.None:
                     break;
@@ -230,16 +248,14 @@ public class Stage : MonoBehaviour
                     break;
             }
         }
-
-        mapUi.CompleteRoom(RoomList);
     }
 
     private void OnDrawGizmos()
     {
-        if (startGO == null || endGO == null) return;
+        /*if (startGO == null || endGO == null) return;
         Gizmos.color = Color.blue;
         Gizmos.DrawSphere(startGO.transform.position, 3f);
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(endGO.transform.position, 3f);
+        Gizmos.DrawSphere(endGO.transform.position, 3f);*/
     }
 }

@@ -6,11 +6,14 @@ using UnityEngine;
 public class SpecialRoom : Room
 {
     [SerializeField] SpecialRoom.Type specialType;
+
+    public Type SpecialType { get => specialType; set => specialType = value; }
+
     public override void GenerateRoom()
     {
-        var rnd = Random.Range(0, System.Enum.GetNames(typeof(SpecialRoom.Type)).Length);
+        //var rnd = Random.Range(0, System.Enum.GetNames(typeof(SpecialRoom.Type)).Length);
 
-        specialType = (Type) rnd;
+        //specialType = (Type) rnd;
 
     if (!IsContainingDoor(Direction.North))
         Instantiate(wallPrefabs[0], transform.position, doorPrefabs[0].transform.rotation, transform);
@@ -45,6 +48,7 @@ public class SpecialRoom : Room
     {
         Troup,
         Bonus,
-        Shop
+        Shop,
+        Null
     }
 }

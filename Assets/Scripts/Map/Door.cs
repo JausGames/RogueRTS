@@ -20,7 +20,7 @@ public class Door : MonoBehaviour
 
         foreach(Room room in connectedRooms)
         {
-            room.SetEnnemyCanMove(true);
+            if(room) room.Open = true;
         }
         if(uiDoor) Destroy(uiDoor);
         var stageGen = FindObjectOfType<StageGenerator>();

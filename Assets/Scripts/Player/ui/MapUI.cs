@@ -25,12 +25,13 @@ public class MapUI : MonoBehaviour
         var canvasTrans = canvas.GetComponent<RectTransform>();
         canvasTrans.sizeDelta = 2f* width * Vector3.right + 2f *width * Vector3.up;
     }
-    public void AddRoom(int[,] roomPos, Color color)
+    public GameObject AddRoom(int[,] roomPos, Color color)
     {
         var room = Instantiate(roomPrefab, Vector3.zero, Quaternion.identity, canvas.transform);
         room.GetComponent<RectTransform>().localPosition = Vector3.right * roomPos[0, 0] * imageSize + Vector3.up * roomPos[0, 1] * imageSize;
         roomUi.Add(room.GetComponent<Image>());
         roomUi[roomUi.Count - 1].color = new Color(color.r, color.g, color.b, miniMapFade);
+        return room;
 
     }
     public void AddRoom(int[,] roomPos)
@@ -64,6 +65,7 @@ public class MapUI : MonoBehaviour
                 offset = Vector3.up;
                 prefab.GetComponent<RectTransform>().localPosition = (uiDoorPos + offset * 0.5f).x * imageSize * Vector3.right + 
                                                                     (uiDoorPos + offset * 0.5f).y * imageSize * Vector3.up;
+                rm.Ui.Add(prefab);
             }
             if (!IsContainingDoor(rm, Direction.Est))
             {
@@ -71,6 +73,7 @@ public class MapUI : MonoBehaviour
                 offset = Vector3.right;
                 prefab.GetComponent<RectTransform>().localPosition = (uiDoorPos + offset * 0.5f).x * imageSize * Vector3.right + 
                                                                     (uiDoorPos + offset * 0.5f).y * imageSize * Vector3.up;
+                rm.Ui.Add(prefab);
             }
 
             if (!IsContainingDoor(rm, Direction.South))
@@ -79,6 +82,7 @@ public class MapUI : MonoBehaviour
                 offset = Vector3.down;
                 prefab.GetComponent<RectTransform>().localPosition = (uiDoorPos + offset * 0.5f).x * imageSize * Vector3.right + 
                                                                     (uiDoorPos + offset * 0.5f).y * imageSize * Vector3.up;
+                rm.Ui.Add(prefab);
             }
             if (!IsContainingDoor(rm, Direction.West))
             {
@@ -86,6 +90,7 @@ public class MapUI : MonoBehaviour
                 offset = Vector3.left;
                 prefab.GetComponent<RectTransform>().localPosition = (uiDoorPos + offset * 0.5f).x * imageSize * Vector3.right + 
                                                                     (uiDoorPos + offset * 0.5f).y * imageSize * Vector3.up;
+                rm.Ui.Add(prefab);
             }
 
 

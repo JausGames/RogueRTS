@@ -207,6 +207,16 @@ PrefabInstance:
       objectReference: {fileID: 530471993}
     - target: {fileID: 8247656370879328197, guid: 6e5e1209dbc7d894eb5381c464c97016,
         type: 3}
+      propertyPath: minRoom
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8247656370879328197, guid: 6e5e1209dbc7d894eb5381c464c97016,
+        type: 3}
+      propertyPath: pathLenght
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8247656370879328197, guid: 6e5e1209dbc7d894eb5381c464c97016,
+        type: 3}
       propertyPath: doorPrefabs.Array.size
       value: 4
       objectReference: {fileID: 0}
@@ -244,6 +254,17 @@ PrefabInstance:
       propertyPath: roomPrefabs.Array.data[0]
       value: 
       objectReference: {fileID: 8714519180634354003, guid: b99e714cdfaaf8e4b819b4a4c48984f7,
+        type: 3}
+    - target: {fileID: 8247656370879328197, guid: 6e5e1209dbc7d894eb5381c464c97016,
+        type: 3}
+      propertyPath: specialRoomPrefabs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8247656370879328197, guid: 6e5e1209dbc7d894eb5381c464c97016,
+        type: 3}
+      propertyPath: specialRoomPrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 8714519180634354003, guid: 464ac3e80a05b5047bf4f43e33206242,
         type: 3}
     m_RemovedComponents:
     - {fileID: 1605426010408349846, guid: 6e5e1209dbc7d894eb5381c464c97016, type: 3}
@@ -1962,7 +1983,7 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
+  orthographic: 1
   orthographic size: 5
   m_Depth: -1
   m_CullingMask:
@@ -1986,13 +2007,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 1.5, z: 0}
+  m_LocalRotation: {x: 0.6427876, y: 0, z: 0, w: 0.7660445}
+  m_LocalPosition: {x: 0, y: 10.99, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 80, y: 0, z: 0}
 --- !u!114 &963194229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2006,7 +2027,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   follow: {fileID: 1027612102}
-  offsetPosition: {x: 0, y: 6, z: 0}
+  offsetPosition: {x: 0, y: 11, z: -2}
   positionClampSpeed: 0.08
 --- !u!114 &963194230
 MonoBehaviour:
