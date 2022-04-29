@@ -29,6 +29,7 @@ public class MapUI : MonoBehaviour
     {
         var room = Instantiate(roomPrefab, Vector3.zero, Quaternion.identity, canvas.transform);
         room.GetComponent<RectTransform>().localPosition = Vector3.right * roomPos[0, 0] * imageSize + Vector3.up * roomPos[0, 1] * imageSize;
+        room.GetComponent<RectTransform>().localRotation = Quaternion.identity;
         roomUi.Add(room.GetComponent<Image>());
         roomUi[roomUi.Count - 1].color = new Color(color.r, color.g, color.b, miniMapFade);
         return room;

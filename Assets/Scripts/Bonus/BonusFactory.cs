@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BonusFactory : MonoBehaviour
+public class BonusFactory : Factory
 {
     [SerializeField] List<Bonus> bonusList = new List<Bonus>();
     [SerializeField] Bonus bonus;
@@ -13,13 +13,12 @@ public class BonusFactory : MonoBehaviour
 
     public bool Open { get => open; set => open = value; }
 
-
-    public void OnInteract(Hitable player)
+    override public void OnInteract(Hitable player)
     {
-        if (!open) OnOpen();
-        else player.AddBonus(bonus); 
+        if (!open) OpenChest();
+        else player.AddBonus(bonus);
     }
-    private void OnOpen()
+    private void OpenChest()
     {
         var rnd = Random.Range(0, bonusList.Count);
         bonusName.text = bonusList[rnd].name;

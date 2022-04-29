@@ -56,7 +56,6 @@ public class Player : Hitable
             actionParticle.Play();
             Destroy(cols[0].gameObject);
         }
-        Debug.Log("Try action -- Bonus");
         cols = Physics.OverlapCapsule(transform.position, transform.position + 2f * transform.transform.forward, 0.5f, bonusLayer);
         if (cols.Length > 0)
         {
