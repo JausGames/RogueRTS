@@ -30,6 +30,7 @@ public class Room : MonoBehaviour
     [SerializeField] GameObject hidindSprite;
 
     [SerializeField] bool open = false;
+    [SerializeField] bool isEmpty = false;
     [SerializeField] int[,] position;
     [SerializeField] List<Vector3> doorsPostition = new List<Vector3>();
     [SerializeField] List<Door> doorObject = new List<Door>();
@@ -38,8 +39,10 @@ public class Room : MonoBehaviour
     [SerializeField] protected List<GameObject> doorPrefabs = new List<GameObject>();
     [SerializeField] protected List<GameObject> wallPrefabs = new List<GameObject>();
 
-    [SerializeField] protected List<MinionSpawner> minionSpawnerList = new List<MinionSpawner>();
-    [SerializeField] protected MinionSpawner minionSpawner;
+    [SerializeField] protected List<MinionSpawner> MinionSpawnerList = new List<MinionSpawner>();
+    [SerializeField] protected MinionSpawner MinionSpawner;
+
+    [SerializeField] protected List<Minion> minions = new List<Minion>();
 
     internal void AddDoor(Door door)
     {
@@ -63,12 +66,13 @@ public class Room : MonoBehaviour
         set {
             open = value;
             SetEnnemyCanMove(value);
-            foreach (GameObject gm in ui) gm.SetActive(value);
+            foreach (GameObject gm in ui) if(gm) gm.SetActive(value);
             if (value) Destroy(hidindSprite);
             }
         }
 
     public List<GameObject> Ui { get => ui; set => ui = value; }
+    public bool IsEmpty { get => isEmpty; set => isEmpty = value; }
 
     private void Awake()
     {
@@ -105,26 +109,40 @@ public class Room : MonoBehaviour
         {
             case Type.Start:
                 Instantiate(roomFloorPrefabs[1], transform.position, doorPrefabs[0].transform.rotation, transform);
+                isEmpty = true;
                 open = true;
                 break;
             case Type.End:
                 Instantiate(roomFloorPrefabs[2], transform.position, doorPrefabs[0].transform.rotation, transform);
+                isEmpty = true;
                 break;
             case Type.Special:
                 Instantiate(roomFloorPrefabs[3], transform.position, doorPrefabs[0].transform.rotation, transform);
+                isEmpty = true;
                 break;
             case Type.Default:
-                var rndSpawn = Random.Range(0, minionSpawnerList.Count);
-                minionSpawner = new MinionSpawner();
-                minionSpawner.SpawnDataList = new List<SpawnData>();
-                minionSpawner.SpawnDataList.AddRange(minionSpawnerList[rndSpawn].SpawnDataList);
-                minionSpawner.RoomTransform = this.transform;
                 Instantiate(roomFloorPrefabs[0], transform.position, doorPrefabs[0].transform.rotation, transform);
-                minionSpawner.SpawnMinion();
+                var rndSpawn = Random.Range(0, MinionSpawnerList.Count);
+                MinionSpawner = new MinionSpawner();
+                MinionSpawner.SpawnDataList = new List<SpawnData>();
+                MinionSpawner.SpawnDataList.AddRange(MinionSpawnerList[rndSpawn].SpawnDataList);
+                MinionSpawner.RoomTransform = this.transform;
+                minions = MinionSpawner.SpawnMinion();
+
+                foreach (Minion min in minions)
+                {
+                    min.dieEvent.AddListener(delegate { minions.Remove(min); CheckIfEmpty(); });
+                }
                 break;
             default:
                 break;
         }
+    }
+
+    private void CheckIfEmpty()
+    {
+        if (this.minions.Count == 0) 
+            isEmpty = true;
     }
 
     protected bool IsContainingDoor(Direction dir)

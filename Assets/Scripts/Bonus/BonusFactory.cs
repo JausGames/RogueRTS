@@ -9,6 +9,8 @@ public class BonusFactory : Factory
     [SerializeField] Bonus bonus;
     [SerializeField] SpriteRenderer rd;
     [SerializeField] Text bonusName;
+    [SerializeField] Text costTxt;
+    [SerializeField] Image coinImage;
     [SerializeField] bool open = false;
 
     public bool Open { get => open; set => open = value; }
@@ -16,11 +18,25 @@ public class BonusFactory : Factory
     override public void OnInteract(Hitable player)
     {
         if (!open) OpenChest();
-        else player.AddBonus(bonus);
+        else
+        {
+            var buyable = true;
+            if(shop)
+            {
+                Player pl = (Player)player;
+                buyable = pl.Wallet.RemoveMoney(bonus.Price);
+                //Destroy(shop.gameObject, 0.1f);
+            }
+            if (!buyable) return;
+            player.AddBonus(bonus);
+            
+            Destroy(this.gameObject);
+        }
     }
     private void OpenChest()
     {
         var rnd = Random.Range(0, bonusList.Count);
+        bonusName.gameObject.SetActive(true);
         bonusName.text = bonusList[rnd].name;
 
         bonus = Instantiate(bonusList[rnd], transform);
@@ -28,6 +44,12 @@ public class BonusFactory : Factory
 
         rd.sprite = bonus.Sprite;
         open = true;
+        if(shop)
+        {
+            coinImage.gameObject.SetActive(true);
+            costTxt.gameObject.SetActive(true);
+            costTxt.text = bonus.Price.ToString();
+        }
     }
 
 }

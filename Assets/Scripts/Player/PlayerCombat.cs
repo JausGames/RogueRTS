@@ -9,11 +9,13 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] CombatData combatData;
     [SerializeField] CombatDataUi ui;
     [SerializeField] public Transform hitPoint;
-    [SerializeField] public LayerMask ennemyLayer;
-    [SerializeField] public LayerMask friendLayer;
+    [SerializeField] private LayerMask ennemyLayer;
+    [SerializeField] private LayerMask friendLayer;
 
     public CombatData CombatData { get => combatData; set { combatData = value; ui.SetUpStat(combatData); } }
 
+    public LayerMask EnnemyLayer { get => ennemyLayer; set => ennemyLayer = value; }
+    public LayerMask FriendLayer { get => friendLayer; set => friendLayer = value; }
 
     public void Attack()
     {

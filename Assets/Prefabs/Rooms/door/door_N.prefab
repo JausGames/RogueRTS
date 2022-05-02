@@ -531,7 +531,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 9ff01577c3a1b0d42b2102393b229d37,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9ff01577c3a1b0d42b2102393b229d37,
         type: 3}
@@ -609,19 +609,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 5797374590423438438}
   m_PrefabAsset: {fileID: 0}
---- !u!65 &7144501834684494699
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 593168151143723756}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.058, y: 0.005999999, z: 0.03999999}
-  m_Center: {x: -0.0435, y: 0, z: 0.009999998}
 --- !u!65 &4421037756898680497
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -635,6 +622,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.058, y: 0.005999999, z: 0.03999999}
   m_Center: {x: 0.0435, y: 0, z: 0.009999998}
+--- !u!65 &7144501834684494699
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593168151143723756}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.058, y: 0.005999999, z: 0.03999999}
+  m_Center: {x: -0.0435, y: 0, z: 0.009999998}
 --- !u!114 &4662238794909326455
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -651,6 +651,19 @@ MonoBehaviour:
   m_Area: 1
   m_IgnoreFromBuild: 0
   m_AffectedAgents: ffffffff
+--- !u!65 &3776368085040199697
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6858836466382359810}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.029000005, y: 0.0055999993, z: 0.03999999}
+  m_Center: {x: 0, y: 0, z: 0.009999998}
 --- !u!114 &5780745001915317176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -666,16 +679,3 @@ MonoBehaviour:
   connectedRooms: []
   uiDoor: {fileID: 0}
   direction: 0
---- !u!65 &3776368085040199697
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6858836466382359810}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.029000005, y: 0.0055999993, z: 0.03999999}
-  m_Center: {x: 0, y: 0, z: 0.009999998}

@@ -2,23 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Factory : MonoBehaviour
+public class Factory : Interactable
 {
+    [SerializeField] protected Shop shop = null;
 
-
-
-    virtual public void OnInteract(Hitable player)
+    public override void OnInteract(Hitable player)
     {
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

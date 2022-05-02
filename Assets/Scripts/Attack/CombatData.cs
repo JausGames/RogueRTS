@@ -16,6 +16,7 @@ abstract public class CombatData : ScriptableObject
     [SerializeField] protected float nextHit = 0f;
     [SerializeField] protected float maxHealth = 10f;
     [SerializeField] protected float health;
+    [SerializeField] protected float dropRate = 0.1f;
     [Header("Histo")]
     [SerializeField] List<Bonus> bonusList = new List<Bonus>();
     [SerializeField] List<String> bonusName = new List<String>();
@@ -33,6 +34,7 @@ abstract public class CombatData : ScriptableObject
     public float Radius { get => hitRadius; set => hitRadius = value; }
     public float Cooldown { get => coolDown; set => coolDown = value; }
     public List<Bonus> BonusList { get => bonusList; set => bonusList = value; }
+    public float DropRate { get => dropRate; set => dropRate = value; }
 
     private void Awake()
     {

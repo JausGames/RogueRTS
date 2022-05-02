@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class Player : Hitable
 {
@@ -12,27 +13,72 @@ public class Player : Hitable
     [SerializeField] MapUI mapUi;
 
     [SerializeField] LayerMask minionMask;
-    //here
     [SerializeField] LayerMask doorLayer;
-    [SerializeField] LayerMask bonusLayer;
+    [SerializeField] LayerMask interactLayer;
+    [SerializeField] LayerMask pickableLayer;
+
+    [SerializeField] PlayerWallet wallet;
 
     [SerializeField] HealthBar healthUI;
     [SerializeField] ParticleSystem actionParticle;
     [SerializeField] List<GameObject> hidableGo;
+    [SerializeField] Text walletTxt;
+
+    public LayerMask MinionMask { get => minionMask; set => minionMask = value; }
+    public PlayerWallet Wallet { get => wallet;}
 
     override public void AddBonus(Bonus bonus)
     {
         combat.AddBonus(bonus);
+    }
+    public LayerMask GetFriendLayer()
+    {
+        return combat.FriendLayer;
+    }
+    public LayerMask GetEnemyLayer()
+    {
+        return combat.EnnemyLayer;
     }
 
     // Start is called before the first frame update
     private void Awake()
     {
        if (combatData != null) combatData = Instantiate(combatData, transform);
+        wallet = new PlayerWallet(10);
+        UpdateWalletUi();
+    }
+    private void OnEnable()
+    {
+        wallet.onAmountChange += UpdateWalletUi;
+    }
+
+    private void UpdateWalletUi()
+    {
+        walletTxt.text = wallet.Amount.ToString();
+    }
+
+    private void OnDisable()
+    {
+        wallet.onAmountChange -= UpdateWalletUi;
     }
     private void Update()
     {
         mapUi.SetPlayerPosition(transform.position.x / GridSettings.gridSize.x, transform.position.z / GridSettings.gridSize.y);
+        //Check for pickable
+        var cols = Physics.OverlapSphere(transform.position, .3f, pickableLayer);
+        if(cols.Length > 0)
+        {
+            List<Pickable> pickables = new List<Pickable>();
+            for(int i = 0; i < cols.Length; i++)
+            {
+                var pick = cols[i].GetComponent<PickableContainer>().Item;
+                if (!pickables.Contains(pick))
+                {
+                    pickables.Add(pick);
+                    pick.AddToPlayer(this);
+                }
+            }
+        }
     }
     void Start()
     {
@@ -49,24 +95,18 @@ public class Player : Hitable
     }
     internal void TryAction()
     {
-        Debug.Log("Try action -- Door");
-        var cols = Physics.OverlapCapsule(transform.position, transform.position + 2f * transform.transform.forward, 0.5f ,doorLayer);
+        var cols = Physics.OverlapCapsule(transform.position, transform.position + 2f * transform.transform.forward, 0.5f,  interactLayer | doorLayer);
+        
         if (cols.Length > 0)
         {
-            actionParticle.Play();
-            Destroy(cols[0].gameObject);
-        }
-        cols = Physics.OverlapCapsule(transform.position, transform.position + 2f * transform.transform.forward, 0.5f, bonusLayer);
-        if (cols.Length > 0)
-        {
-            var bonus = cols[0].GetComponent<BonusFactory>();
-            if(!bonus.Open)
-                bonus.OnInteract(this);
-            else
+            var closest = cols[0];
+            for (int i = 1; i < cols.Length; i++)
             {
-                bonus.OnInteract(this);
-                Destroy(cols[0].gameObject);
+                if ((transform.position - cols[i].transform.position).sqrMagnitude < (transform.position - closest.transform.position).sqrMagnitude) closest = cols[i];
             }
+
+            var interactable = closest.GetComponent<Interactable>();
+            interactable.OnInteract(this);
         }
     }
 
@@ -75,7 +115,7 @@ public class Player : Hitable
         combat.Attack();
     }
 
-    void AddMinionToArmy(Minion minion)
+    public void AddMinionToArmy(Minion minion)
     {
         minion.Owner = this;
         army.AddMinion(minion);
@@ -109,6 +149,33 @@ public class Player : Hitable
     public override void StopMotion(bool isMoving)
     {
         motor.StopMotion(isMoving);
+    }
+}
+
+public class PlayerWallet
+{
+    int amount = 0;
+    public delegate void Amountchange();
+    public event Amountchange onAmountChange;
+
+    public PlayerWallet(int amount)
+    {
+        this.amount = amount;
+    }
+
+    public int Amount { get => amount;}
+    public bool RemoveMoney(int amount)
+    {
+        if (this.amount < amount) return false;
+
+        this.amount -= amount;
+        onAmountChange();
+        return true;
+    }
+    public void AddMoney(int amount)
+    {
+        this.amount += amount;
+        onAmountChange();
     }
 }
 

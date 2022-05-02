@@ -31,8 +31,10 @@ public class Bonus : ScriptableObject
     [SerializeField] List<AttackModifier> modifiers = new List<AttackModifier>();
     [SerializeField] StatBonus bonus;
     [SerializeField] Sprite sprite;
+    [SerializeField] int basePrice;
 
     public Sprite Sprite { get => sprite; }
     public StatBonus StatBonus { get => bonus;}
     public List<AttackModifier> Modifiers { get => modifiers;}
+    public int Price { get => basePrice;}
 }

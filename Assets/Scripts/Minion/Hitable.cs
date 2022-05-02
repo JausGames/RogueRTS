@@ -22,6 +22,7 @@ abstract public class Hitable : MonoBehaviour
     }
     virtual public void GetHit(float damage)
     {
+        if (combatData.Health == 0f) return;
         var damageWithArmor = Mathf.Min(damage - combatData.PhysicArmor);
         combatData.Health = Mathf.Max(combatData.Health - damageWithArmor, 0f);
 
@@ -31,6 +32,7 @@ abstract public class Hitable : MonoBehaviour
 
     virtual public void GetHit(AttackData attackData)
     {
+        if (combatData.Health == 0f) return;
         var damageWithArmor = Mathf.Min(attackData.damage - combatData.PhysicArmor);
         combatData.Health = Mathf.Max(combatData.Health - damageWithArmor, 0f);
 

@@ -24,7 +24,8 @@ public class RangeAttack : CombatData
         var projectileCmp = projectileGo.GetComponent<Projectile>();
         projectileCmp.EnemyLayer = enemyLayer;
 
-        projectileCmp.WillDestroyLayer = ~friendLayer & (~(1 << projectileGo.layer) & ~(1 << floorLayer));
+        projectileCmp.WillDestroyLayer = 1 | (1 << 6);
+        //projectileCmp.WillDestroyLayer = ~friendLayer & (1 << projectileGo.layer) & ~(1 << floorLayer));
         projectileCmp.Data = this;
         projectileCmp.Range = hitRange;
         projectileCmp.Radius = hitRadius;

@@ -67,7 +67,7 @@ public class Projectile : MonoBehaviour
 
         cols = Physics.OverlapSphere(transform.position, radius, WillDestroyLayer);
         if(cols.Length != 0)
-            Destroy(gameObject, 0.5f);
+            Destroy(gameObject);
 
 
     }

@@ -29,19 +29,22 @@ public class Minion : Hitable
     [SerializeField] Type type;
     [Header("Component")]
     [SerializeField] public Transform hitPoint;
-    [SerializeField] public LayerMask enemyLayer;
-    [SerializeField] public LayerMask friendLayer;
+    [SerializeField] private LayerMask enemyLayer;
+    [SerializeField] private LayerMask friendLayer;
     [SerializeField] public BeetlingAnimatorController animator;
     [SerializeField] Player owner;
+    [SerializeField] Vector3 randomDestination;
     NavMeshAgent agent;
 
     [HideInInspector]
 
-    public Player Owner { get; set; }
+    public Player Owner { get => owner; set => owner = value; }
     public bool Fighting { get => fighting; set => fighting = value; }
     public Type MinionType { get => type; set => type = value; }
+    public LayerMask EnemyLayer { get => enemyLayer; set => enemyLayer = value; }
+    public LayerMask FriendLayer { get => friendLayer; set => friendLayer = value; }
 
-    private void Awake()
+    private void Start()
     {
         if (combatData != null) combatData = Instantiate(combatData);
 
@@ -58,6 +61,7 @@ public class Minion : Hitable
         mat.SetColor("_LeafColor", leafColor);
         renderer.material = mat;
         if (owner == null) mat.SetInt("_isEnemy", 1);
+        randomDestination = transform.position;
      }
 
     private void Update()
@@ -118,16 +122,41 @@ public class Minion : Hitable
             Fighting = false;
             var player = FindObjectOfType<Player>();
 
-            if (owner == null && FindObjectOfType<Player>() != null)
+            if (owner == null && player != null)
             {
-                SetPosition(player.transform.position);
-                var rot = (player.transform.position - transform.position).x * Vector3.right + (player.transform.position - transform.position).z * Vector3.forward;
-                SetRotation(rot.normalized);
+                cols = Physics.OverlapSphere(transform.position, 3f, enemyLayer);
+
+                if (cols.Length > 0)
+                {
+                    SetPosition(cols[0].transform.position);
+                    var rot = (cols[0].transform.position - transform.position).x * Vector3.right + (cols[0].transform.position - transform.position).z * Vector3.forward;
+                    SetRotation(rot.normalized);
+                }
+                else
+                {
+                    Debug.DrawLine(transform.position, randomDestination);
+                    if ((transform.position - randomDestination).sqrMagnitude < 0.2f)
+                    {
+                        var rndX = UnityEngine.Random.Range(-1f, 1f);
+                        var rndY = UnityEngine.Random.Range(-1f, 1f);
+                        var distance = 5f;
+                        randomDestination = (rndX * Vector3.right + rndY * Vector3.forward).normalized * distance + transform.position;
+
+                        
+                        SetPosition(randomDestination);
+                        var rot = (randomDestination - transform.position).x * Vector3.right + (randomDestination - transform.position).z * Vector3.forward;
+                        SetRotation(rot.normalized);
+                    }
+                }
             }
         }
         UpdateAnimator();
     }
-
+    public void SetLayers(LayerMask friend, LayerMask enemy)
+    {
+        enemyLayer = enemy;
+        friendLayer = friend;
+    }
     private void UpdateAnimator()
     {
         if(Mathf.Abs(agent.velocity.x) > Mathf.Abs(agent.velocity.z) && Mathf.Abs(agent.velocity.x) > 0.2f)
@@ -146,9 +175,25 @@ public class Minion : Hitable
 
     public void SetPosition(Vector3 position)
     {
-        if (agent && agent.isOnNavMesh) agent.SetDestination(position);
-        var color = Fighting ? Color.red : Color.green;
-        Debug.DrawLine(transform.position, position, color);
+        if (!agent || !agent.isOnNavMesh) return;
+        var canPass = false;
+        for(float i = 0f; i <= 1f; i += 0.1f)
+        {
+            NavMeshPath navMeshPath = new NavMeshPath();
+            //create path and check if it can be done
+            // and check if navMeshAgent can reach its target
+            if (agent.CalculatePath(position * (1f - i) + transform.position * i, navMeshPath) && navMeshPath.status == NavMeshPathStatus.PathComplete)
+            {
+                agent.SetPath(navMeshPath);
+                randomDestination = position * (1f - i) + transform.position * i;
+                var color = Fighting ? Color.red : Color.green;
+                canPass = true;
+                Debug.DrawLine(transform.position, position, color);
+                break;
+            }
+        }
+
+        if(!canPass) randomDestination = transform.position;
     }
 
     public void SetRotation(Vector3 direction)
@@ -170,26 +215,41 @@ public class Minion : Hitable
     }
     protected override void Die()
     {
-        /*if (owner == null)
+        if (!owner)
         {
-            var rnd = UnityEngine.Random.Range(0f, 100f);
-            if (rnd > 80f)
-            {
-                owner = FindObjectOfType<Player>();
-                var army = FindObjectOfType<Army>();
-                army.AddMinion(this);
-                enemyLayer = gameObject.layer;
-                
-                SetLayerToChildrens(transform, CombatLayer.GetMinionLayer());
+            var dropRateRND = UnityEngine.Random.Range(0f, 1f);
 
-                transform.parent = GameObject.Find("Army").transform;
-                friendLayer = 1 << CombatLayer.GetPlayerLayer() | 1 << CombatLayer.GetMinionLayer();
-                enemyLayer = 1 << CombatLayer.GetEnnemyLayer();
-                if (fighting) fighting = false;
-                combatData.Health = combatData.MAX_HEALTH;
+            if (dropRateRND < CombatData.DropRate)
+            {
+                var GO = Instantiate(Resources.Load<GameObject>("Prefabs/Pickables/PickableContainer"), transform.position, Quaternion.identity);
+                var pickables = Resources.LoadAll<Pickable>("Prefabs/Pickables/Presets");
+                var rates = new List<float>();
+                var totalRate = 0f;
+                for (int i = 0; i < pickables.Length; i++)
+                {
+                    rates.Add(pickables[i].Rate);
+                    totalRate += pickables[i].Rate;
+                }
+                var rnd = UnityEngine.Random.Range(0f, totalRate);
+                var result = 0f;
+
+                for (int i = 0; i < rates.Count; i++)
+                {
+                    var sumRate = 0f;
+                    for (int j = 0; j <= i; j++)
+                    {
+                        sumRate += rates[j];
+                    }
+                    if (rnd <= sumRate)
+                    {
+                        GO.GetComponent<PickableContainer>().Item = Instantiate(pickables[i], transform.position, GO.transform.rotation, GO.transform);
+                        break;
+                    }
+                }
+                GO.GetComponentInChildren<SpriteRenderer>().sprite = GO.GetComponentInChildren<PickableContainer>().Item.Sprite;
+
             }
         }
-        else*/
             base.Die();
 
     }

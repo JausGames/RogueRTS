@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   factories: []
+  prices: 
 --- !u!1001 &4390232862759842581
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -53,6 +54,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5514721848864695558}
     m_Modifications:
+    - target: {fileID: 3627339858290032624, guid: 5b687b8f924aa1041ac269cc56178549,
+        type: 3}
+      propertyPath: shop
+      value: 
+      objectReference: {fileID: 7284225535126434927}
     - target: {fileID: 4893352607294639799, guid: 5b687b8f924aa1041ac269cc56178549,
         type: 3}
       propertyPath: m_Name
@@ -113,6 +119,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8177108460506396665, guid: 5b687b8f924aa1041ac269cc56178549,
+        type: 3}
+      propertyPath: shop
+      value: 
+      objectReference: {fileID: 7284225535126434927}
+    - target: {fileID: 8905579833818886815, guid: 5b687b8f924aa1041ac269cc56178549,
+        type: 3}
+      propertyPath: shop
+      value: 
+      objectReference: {fileID: 7284225535126434927}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5b687b8f924aa1041ac269cc56178549, type: 3}
 --- !u!1 &9152884279478107554 stripped
@@ -179,6 +195,7 @@ MonoBehaviour:
   - {fileID: 5150926291744309642}
   - {fileID: 1061683921537060069}
   - {fileID: 5591167626150200556}
+  prices: 
 --- !u!1001 &7247129683377987906
 PrefabInstance:
   m_ObjectHideFlags: 0

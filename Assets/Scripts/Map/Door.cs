@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Door : MonoBehaviour
+public class Door : Interactable
 {
     [SerializeField] List<Room> connectedRooms = new List<Room>();
     [SerializeField] GameObject uiDoor;
@@ -13,6 +13,16 @@ public class Door : MonoBehaviour
     public GameObject UiDoor { get => uiDoor; set => uiDoor = value; }
     public Direction Direction { get => direction; set => direction = value; }
 
+
+    override public void OnInteract(Hitable player)
+    {
+        foreach(Room room in connectedRooms)
+        {
+            if(room.Open && room.IsEmpty)
+                Destroy(this.gameObject);
+        }
+    }
+
     private void OnDestroy()
     {
         /*var room = GetComponentInParent<Room>();
@@ -20,7 +30,7 @@ public class Door : MonoBehaviour
 
         foreach(Room room in connectedRooms)
         {
-            if(room) room.Open = true;
+            if(room != null) room.Open = true;
         }
         if(uiDoor) Destroy(uiDoor);
         var stageGen = FindObjectOfType<StageGenerator>();

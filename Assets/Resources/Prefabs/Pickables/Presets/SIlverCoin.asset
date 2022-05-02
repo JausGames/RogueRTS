@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48b8ca19217774e46a6c72e9c5365a5c, type: 3}
-  m_Name: Opp_range_top
+  m_Script: {fileID: 11500000, guid: 8bba7d67039548441a0ed937e1f4cefa, type: 3}
+  m_Name: SIlverCoin
   m_EditorClassIdentifier: 
-  prefab: {fileID: 6566044273373363422, guid: 11e4fac40bcf7af4cac2f474c88a551d, type: 3}
-  position: {x: 0, y: 0, z: 5}
-  rotation: {x: 0, y: 0, z: 0, w: 0}
+  sprite: {fileID: 21300000, guid: 25c8a5f8cf703764198d48e6c616f3f1, type: 3}
+  rate: 15

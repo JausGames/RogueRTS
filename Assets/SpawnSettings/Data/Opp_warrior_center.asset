@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 48b8ca19217774e46a6c72e9c5365a5c, type: 3}
-  m_Name: Opp_cac_bot
+  m_Name: Opp_warrior_center
   m_EditorClassIdentifier: 
   prefab: {fileID: 6114991911659487762, guid: 9bde2186875e33744ae603cadefef4b4, type: 3}
-  position: {x: 0, y: 0, z: -5}
+  position: {x: 0, y: 0, z: 0}
   rotation: {x: 0, y: 0, z: 0, w: 0}

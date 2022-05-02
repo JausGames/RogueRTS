@@ -15,10 +15,25 @@ public class MinionSpawner : ScriptableObject
     {
         Instantiate(prefab, position, rotation, parent);
     }
-    public void SpawnMinion()
+    public List<Minion> SpawnMinion()
     {
+        var minions = new List<Minion>();
         foreach (SpawnData data in SpawnDataList)
-            Instantiate(data.prefab, RoomTransform.position + data.position, data.rotation, RoomTransform);
+            minions.Add(
+                Instantiate(data.prefab, RoomTransform.position + data.position, data.rotation, RoomTransform)
+                    .GetComponent<Minion>()
+                );
+        return minions;
+    }
+    public List<Minion> SpawnMinion(Transform parent)
+    {
+        var minions = new List<Minion>();
+        foreach (SpawnData data in SpawnDataList)
+            minions.Add(
+                Instantiate(data.prefab, RoomTransform.position + data.position, data.rotation, parent)
+                    .GetComponent<Minion>()
+                );
+        return minions;
     }
 
 }

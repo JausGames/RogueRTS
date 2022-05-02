@@ -45,9 +45,14 @@ public class PlayerInput : MonoBehaviour
         if (motor == null) return;
         var look = (Vector3) context.ReadValue<Vector2>();
         look.z = 20f;
+        var lookPos = Camera.main.ScreenToWorldPoint(look);
+        var playerPos = Camera.main.ScreenToWorldPoint(Screen.width * 0.5f * Vector3.right + Screen.height * Vector3.up);
 
-        var mousePlayerDelta = Camera.main.ScreenToWorldPoint(look) - transform.position;
-        Debug.DrawLine(transform.position, Camera.main.ScreenToWorldPoint(look));
+        playerPos = playerPos.x * Vector3.right + playerPos.z * Vector3.forward;
+        lookPos = lookPos.x * Vector3.right + lookPos.z * Vector3.forward;
+
+        var mousePlayerDelta = lookPos - playerPos;
+
         //var mousePlayerDelta = Camera.main.ScreenToWorldPoint(look);
         //var mousePlayerDelta = look;
         Debug.Log("OnMouseLook, mousePlayerDelta = " + mousePlayerDelta);
